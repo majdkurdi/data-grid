@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import 'consts.dart';
@@ -25,7 +26,7 @@ class XtraDataGrid extends StatefulWidget {
       this.manualFocus,
       this.autoFocus = true,
       this.contextMenu,
-      this.onKey,
+      this.shortcuts,
       this.onRebuild,
       this.groupNameBuilder,
       this.rowHeight = 22});
@@ -46,7 +47,8 @@ class XtraDataGrid extends StatefulWidget {
   final FocusNode? focusNode;
   final List<Widget> Function(BuildContext, DataGridRow, DataGridCell)?
       contextMenu;
-  final void Function(KeyEvent)? onKey;
+  final Map<LogicalKeyboardKey, void Function(dynamic currenctCellValue)>?
+      shortcuts;
   final void Function()? onRebuild;
   final String Function(dynamic)? groupNameBuilder;
 
@@ -76,211 +78,212 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   final indexesController = ScrollController();
   MyGridColumn? groupByColumn;
 
-  // void onKey(KeyEvent event) async {
-  //   if (event is KeyDownEvent) {
-  //     final oldCell = currentCell;
-  //     final oldEditMode = editMode;
-  //     if (event.logicalKey == LogicalKeyboardKey.arrowLeft && !editMode) {
-  //       currentCell = arabicLocale ? _nextCell() : _previousCell();
-  //       // while (!widget.columns[currentCell.columnIndex].allowEditing) {
-  //       //   currentCell = arabicLocale ? _nextCell() : _previousCell();
-  //       // }
-  //     } else if (event.logicalKey == LogicalKeyboardKey.arrowRight &&
-  //         !editMode) {
-  //       currentCell = arabicLocale ? _previousCell() : _nextCell();
-  //       // while (!widget.columns[currentCell.columnIndex].allowEditing) {
-  //       //   currentCell = arabicLocale ? _previousCell() : _nextCell();
-  //       // }
-  //     } else if (event.logicalKey == LogicalKeyboardKey.arrowDown &&
-  //         !editMode) {
-  //       if (currentCell.rowIndex == widget.source.rows.length - 1) {
-  //         currentCell = currentCell;
-  //       } else {
-  //         currentCell = (RowColumnIndex(
-  //             currentCell.rowIndex + 1, currentCell.columnIndex));
-  //       }
-  //     } else if (event.logicalKey == LogicalKeyboardKey.pageDown && !editMode) {
-  //       if (currentCell.rowIndex >= widget.source.rows.length - 11) {
-  //         currentCell = RowColumnIndex(
-  //             widget.source.rows.length - 1, currentCell.columnIndex);
-  //       } else {
-  //         currentCell = (RowColumnIndex(
-  //             currentCell.rowIndex + 10, currentCell.columnIndex));
-  //       }
-  //     } else if (event.logicalKey == LogicalKeyboardKey.arrowUp && !editMode) {
-  //       if (RawKeyboard.instance.keysPressed
-  //           .contains(LogicalKeyboardKey.home)) {
-  //         currentCell = RowColumnIndex(0, 0);
-  //       } else {
-  //         if (currentCell.rowIndex == 0) {
-  //           currentCell = currentCell;
-  //         } else {
-  //           currentCell = (RowColumnIndex(
-  //               currentCell.rowIndex - 1, currentCell.columnIndex));
-  //         }
-  //       }
-  //     } else if (event.logicalKey == LogicalKeyboardKey.end && !editMode) {
-  //       currentCell =
-  //           RowColumnIndex(currentCell.rowIndex, widget.columns.length - 1);
-  //     } else if (event.logicalKey == LogicalKeyboardKey.home && !editMode) {
-  //       currentCell = RowColumnIndex(currentCell.rowIndex, 0);
-  //     } else if (event.logicalKey == LogicalKeyboardKey.pageUp && !editMode) {
-  //       if (currentCell.rowIndex <= 10) {
-  //         currentCell = RowColumnIndex(0, currentCell.columnIndex);
-  //       } else {
-  //         currentCell = (RowColumnIndex(
-  //             currentCell.rowIndex - 10, currentCell.columnIndex));
-  //       }
-  //     } else if (event.logicalKey == LogicalKeyboardKey.escape && editMode) {
-  //       widget.source.onCellCancelEdit(currentCell);
-  //       editMode = false;
-  //     } else if (event.logicalKey == LogicalKeyboardKey.enter) {
-  //       if (RawKeyboard.instance.keysPressed.any((e) => [
-  //             LogicalKeyboardKey.controlLeft,
-  //             LogicalKeyboardKey.controlRight
-  //           ].contains(e))) {
-  //         if (editMode) {
-  //           endEdit(RowColumnIndex(
-  //               currentCell.rowIndex + 1, currentCell.columnIndex));
-  //         } else {
-  //           currentCell = oldCell.rowIndex == widget.source.rows.length - 1
-  //               ? currentCell
-  //               : RowColumnIndex(
-  //                   currentCell.rowIndex + 1, currentCell.columnIndex);
-  //         }
-  //       } else {
-  //         if (!editMode) {
-  //           currentCell = _nextCell();
-  //         }
-  //       }
-  //     } else if (event.logicalKey == LogicalKeyboardKey.f2 &&
-  //         currentCell.rowIndex >= 0 &&
-  //         currentCell.columnIndex >= 0 &&
-  //         widget.columns[currentCell.columnIndex].allowEditing) {
-  //       editMode = widget.source.onCellBeginEdit(
-  //           widget.source.rows[currentCell.rowIndex],
-  //           currentCell,
-  //           widget.columns[currentCell.columnIndex]);
-  //     } else if (event.logicalKey == LogicalKeyboardKey.tab) {
-  //       final keysPressed = RawKeyboard.instance.keysPressed;
-  //       final shiftPressed =
-  //           keysPressed.contains(LogicalKeyboardKey.shiftLeft) ||
-  //               keysPressed.contains(LogicalKeyboardKey.shiftRight);
-  //       if (editMode) {
-  //         endEdit(shiftPressed ? _previousCell() : null);
-  //       } else {
-  //         currentCell = shiftPressed ? _previousCell() : _nextCell();
-  //       }
-  //     } else if ((engLetters
-  //                 .contains(event.logicalKey.keyLabel.toLowerCase()) ||
-  //             araLetters.contains(event.character) ||
-  //             numbers.contains(
-  //                 event.logicalKey.keyLabel.replaceAll('Numpad ', '')) ||
-  //             araNumbers.contains(
-  //                 event.logicalKey.keyLabel.replaceAll('Numpad ', '')) ||
-  //             event.logicalKey == LogicalKeyboardKey.delete) &&
-  //         !editMode &&
-  //         widget.columns[currentCell.columnIndex].allowEditing) {
-  //       if (event.logicalKey != LogicalKeyboardKey.delete) {
-  //         widget.source.firstChar = event.character
-  //                 ?.replaceAll('Numpad ', '')
-  //                 .toLowerCase()
-  //                 .replaceArabicNumber() ??
-  //             '';
-  //       }
-  //       editMode = widget.source.onCellBeginEdit(
-  //           widget.source.rows[currentCell.rowIndex],
-  //           currentCell,
-  //           widget.columns[currentCell.columnIndex]);
-  //     } else if (event.logicalKey == LogicalKeyboardKey.f3) {
-  //       await widget.source.onCellSubmit(
-  //           widget.source.rows[currentCell.rowIndex],
-  //           currentCell,
-  //           widget.columns[currentCell.columnIndex]);
-  //       setState(() {});
-  //     } else if (!editMode && event.logicalKey == LogicalKeyboardKey.f10) {
-  //       if (currentCellValue is ConstantsCard) {
-  //         context.read<QuickInfoBloc>().add(GetCardInfo(currentCellValue));
-  //       }
-  //     }
-  //     if (currentCell.toString() != oldCell.toString()) {
-  //       editMode = false;
-  //       if (scrollController.hasClients &&
-  //           currentCell.columnIndex != oldCell.columnIndex) {
-  //         if (oldCell.columnIndex == 0 &&
-  //             currentCell.columnIndex == widget.columns.length - 1) {
-  //           scrollController.animateTo(
-  //               scrollController.position.maxScrollExtent,
-  //               duration: const Duration(milliseconds: 50),
-  //               curve: Curves.ease);
-  //         } else if (oldCell.columnIndex == widget.columns.length - 1 &&
-  //             currentCell.columnIndex == 0) {
-  //           scrollController.animateTo(0,
-  //               duration: const Duration(milliseconds: 50), curve: Curves.ease);
-  //         } else if (currentCell.columnIndex >= 5 &&
-  //             currentCell.columnIndex > oldCell.columnIndex &&
-  //             scrollController.offset !=
-  //                 scrollController.position.maxScrollExtent) {
-  //           scrollController.animateTo(scrollController.offset + 100,
-  //               duration: const Duration(milliseconds: 50), curve: Curves.ease);
-  //         } else if (currentCell.columnIndex <= widget.columns.length - 5 &&
-  //             currentCell.columnIndex < oldCell.columnIndex &&
-  //             scrollController.offset !=
-  //                 scrollController.position.minScrollExtent) {
-  //           scrollController.animateTo(scrollController.offset - 100,
-  //               duration: const Duration(milliseconds: 50), curve: Curves.ease);
-  //         }
-  //       }
-  //       if (oldCell.rowIndex <= widget.source.rows.length - 7 &&
-  //           currentCell.rowIndex < oldCell.rowIndex &&
-  //           verticalController.offset != 0 &&
-  //           event.logicalKey != LogicalKeyboardKey.pageUp) {
-  //         verticalController
-  //             .jumpTo(verticalController.offset - widget.rowHeight);
-  //       } else if (oldCell.rowIndex >= 7 &&
-  //           currentCell.rowIndex > oldCell.rowIndex &&
-  //           verticalController.offset !=
-  //               verticalController.position.maxScrollExtent &&
-  //           event.logicalKey != LogicalKeyboardKey.pageDown) {
-  //         verticalController
-  //             .jumpTo(verticalController.offset + widget.rowHeight);
-  //       } else if (oldCell.rowIndex == 0 &&
-  //           currentCell.rowIndex == widget.source.rows.length - 1) {
-  //         verticalController
-  //             .jumpTo(verticalController.position.maxScrollExtent);
-  //       } else if (oldCell.rowIndex == widget.source.rows.length - 1 &&
-  //           currentCell.rowIndex == 0) {
-  //         verticalController.jumpTo(0);
-  //       } else if (verticalController.offset <
-  //               verticalController.position.maxScrollExtent &&
-  //           event.logicalKey == LogicalKeyboardKey.pageDown) {
-  //         verticalController.jumpTo(
-  //             verticalController.offset + widget.rowHeight * 10 <=
-  //                     verticalController.position.maxScrollExtent
-  //                 ? verticalController.offset + widget.rowHeight * 10
-  //                 : verticalController.position.maxScrollExtent);
-  //       } else if (verticalController.offset > 0 &&
-  //           event.logicalKey == LogicalKeyboardKey.pageUp) {
-  //         verticalController.jumpTo(
-  //             verticalController.offset - widget.rowHeight * 10 >= 0
-  //                 ? verticalController.offset - widget.rowHeight * 10
-  //                 : 0);
-  //       }
-  //     }
-  //     // print(oldCell.rowIndex
-  //     //      == 0
-  //     // &&
-  //     // currentCell.rowIndex == widget.source.rows.length - 1
-  //     // );
-  //     if (editMode != oldEditMode ||
-  //         currentCell.toString() != oldCell.toString() ||
-  //         !editMode) {
-  //       Future.delayed(Duration.zero, () {
-  //         if (mounted) setState(() {});
-  //       });
-  //     }
-  //   }
-  // }
+  void onKey(KeyEvent event) async {
+    if (event is KeyDownEvent) {
+      final oldCell = currentCell;
+      final oldEditMode = editMode;
+      if (event.logicalKey == LogicalKeyboardKey.arrowLeft && !editMode) {
+        currentCell = arabicLocale ? _nextCell() : _previousCell();
+        // while (!widget.columns[currentCell.columnIndex].allowEditing) {
+        //   currentCell = arabicLocale ? _nextCell() : _previousCell();
+        // }
+      } else if (event.logicalKey == LogicalKeyboardKey.arrowRight &&
+          !editMode) {
+        currentCell = arabicLocale ? _previousCell() : _nextCell();
+        // while (!widget.columns[currentCell.columnIndex].allowEditing) {
+        //   currentCell = arabicLocale ? _previousCell() : _nextCell();
+        // }
+      } else if (event.logicalKey == LogicalKeyboardKey.arrowDown &&
+          !editMode) {
+        if (currentCell.rowIndex == widget.source.rows.length - 1) {
+          currentCell = currentCell;
+        } else {
+          currentCell = (RowColumnIndex(
+              currentCell.rowIndex + 1, currentCell.columnIndex));
+        }
+      } else if (event.logicalKey == LogicalKeyboardKey.pageDown && !editMode) {
+        if (currentCell.rowIndex >= widget.source.rows.length - 11) {
+          currentCell = RowColumnIndex(
+              widget.source.rows.length - 1, currentCell.columnIndex);
+        } else {
+          currentCell = (RowColumnIndex(
+              currentCell.rowIndex + 10, currentCell.columnIndex));
+        }
+      } else if (event.logicalKey == LogicalKeyboardKey.arrowUp && !editMode) {
+        if (RawKeyboard.instance.keysPressed
+            .contains(LogicalKeyboardKey.home)) {
+          currentCell = RowColumnIndex(0, 0);
+        } else {
+          if (currentCell.rowIndex == 0) {
+            currentCell = currentCell;
+          } else {
+            currentCell = (RowColumnIndex(
+                currentCell.rowIndex - 1, currentCell.columnIndex));
+          }
+        }
+      } else if (event.logicalKey == LogicalKeyboardKey.end && !editMode) {
+        currentCell =
+            RowColumnIndex(currentCell.rowIndex, widget.columns.length - 1);
+      } else if (event.logicalKey == LogicalKeyboardKey.home && !editMode) {
+        currentCell = RowColumnIndex(currentCell.rowIndex, 0);
+      } else if (event.logicalKey == LogicalKeyboardKey.pageUp && !editMode) {
+        if (currentCell.rowIndex <= 10) {
+          currentCell = RowColumnIndex(0, currentCell.columnIndex);
+        } else {
+          currentCell = (RowColumnIndex(
+              currentCell.rowIndex - 10, currentCell.columnIndex));
+        }
+      } else if (event.logicalKey == LogicalKeyboardKey.escape && editMode) {
+        widget.source.onCellCancelEdit(currentCell);
+        editMode = false;
+      } else if (event.logicalKey == LogicalKeyboardKey.enter) {
+        if (RawKeyboard.instance.keysPressed.any((e) => [
+              LogicalKeyboardKey.controlLeft,
+              LogicalKeyboardKey.controlRight
+            ].contains(e))) {
+          if (editMode) {
+            endEdit(RowColumnIndex(
+                currentCell.rowIndex + 1, currentCell.columnIndex));
+          } else {
+            currentCell = oldCell.rowIndex == widget.source.rows.length - 1
+                ? currentCell
+                : RowColumnIndex(
+                    currentCell.rowIndex + 1, currentCell.columnIndex);
+          }
+        } else {
+          if (!editMode) {
+            currentCell = _nextCell();
+          }
+        }
+      } else if (event.logicalKey == LogicalKeyboardKey.f2 &&
+          currentCell.rowIndex >= 0 &&
+          currentCell.columnIndex >= 0 &&
+          widget.columns[currentCell.columnIndex].allowEditing) {
+        editMode = widget.source.onCellBeginEdit(
+            widget.source.rows[currentCell.rowIndex],
+            currentCell,
+            widget.columns[currentCell.columnIndex]);
+      } else if (event.logicalKey == LogicalKeyboardKey.tab) {
+        final keysPressed = RawKeyboard.instance.keysPressed;
+        final shiftPressed =
+            keysPressed.contains(LogicalKeyboardKey.shiftLeft) ||
+                keysPressed.contains(LogicalKeyboardKey.shiftRight);
+        if (editMode) {
+          endEdit(shiftPressed ? _previousCell() : null);
+        } else {
+          currentCell = shiftPressed ? _previousCell() : _nextCell();
+        }
+      } else if ((englishLetters
+                  .contains(event.logicalKey.keyLabel.toLowerCase()) ||
+              arabicLetters.contains(event.character) ||
+              nums.contains(
+                  event.logicalKey.keyLabel.replaceAll('Numpad ', '')) ||
+              arabicNumbers.contains(
+                  event.logicalKey.keyLabel.replaceAll('Numpad ', '')) ||
+              event.logicalKey == LogicalKeyboardKey.delete) &&
+          !editMode &&
+          widget.columns[currentCell.columnIndex].allowEditing) {
+        if (event.logicalKey != LogicalKeyboardKey.delete) {
+          widget.source.firstChar = event.character
+                  ?.replaceAll('Numpad ', '')
+                  .toLowerCase()
+                  .replaceArabicNumber() ??
+              '';
+        }
+        editMode = widget.source.onCellBeginEdit(
+            widget.source.rows[currentCell.rowIndex],
+            currentCell,
+            widget.columns[currentCell.columnIndex]);
+      } else if (event.logicalKey == LogicalKeyboardKey.f3) {
+        await widget.source.onCellSubmit(
+            widget.source.rows[currentCell.rowIndex],
+            currentCell,
+            widget.columns[currentCell.columnIndex]);
+        setState(() {});
+      } else if (!editMode && event.logicalKey == LogicalKeyboardKey.f10) {
+        widget.shortcuts?[LogicalKeyboardKey.f10]?.call(currentCellValue);
+        // if (currentCellValue is ConstantsCard) {
+        //   context.read<QuickInfoBloc>().add(GetCardInfo(currentCellValue));
+        // }
+      }
+      if (currentCell.toString() != oldCell.toString()) {
+        editMode = false;
+        if (scrollController.hasClients &&
+            currentCell.columnIndex != oldCell.columnIndex) {
+          if (oldCell.columnIndex == 0 &&
+              currentCell.columnIndex == widget.columns.length - 1) {
+            scrollController.animateTo(
+                scrollController.position.maxScrollExtent,
+                duration: const Duration(milliseconds: 50),
+                curve: Curves.ease);
+          } else if (oldCell.columnIndex == widget.columns.length - 1 &&
+              currentCell.columnIndex == 0) {
+            scrollController.animateTo(0,
+                duration: const Duration(milliseconds: 50), curve: Curves.ease);
+          } else if (currentCell.columnIndex >= 5 &&
+              currentCell.columnIndex > oldCell.columnIndex &&
+              scrollController.offset !=
+                  scrollController.position.maxScrollExtent) {
+            scrollController.animateTo(scrollController.offset + 100,
+                duration: const Duration(milliseconds: 50), curve: Curves.ease);
+          } else if (currentCell.columnIndex <= widget.columns.length - 5 &&
+              currentCell.columnIndex < oldCell.columnIndex &&
+              scrollController.offset !=
+                  scrollController.position.minScrollExtent) {
+            scrollController.animateTo(scrollController.offset - 100,
+                duration: const Duration(milliseconds: 50), curve: Curves.ease);
+          }
+        }
+        if (oldCell.rowIndex <= widget.source.rows.length - 7 &&
+            currentCell.rowIndex < oldCell.rowIndex &&
+            verticalController.offset != 0 &&
+            event.logicalKey != LogicalKeyboardKey.pageUp) {
+          verticalController
+              .jumpTo(verticalController.offset - widget.rowHeight);
+        } else if (oldCell.rowIndex >= 7 &&
+            currentCell.rowIndex > oldCell.rowIndex &&
+            verticalController.offset !=
+                verticalController.position.maxScrollExtent &&
+            event.logicalKey != LogicalKeyboardKey.pageDown) {
+          verticalController
+              .jumpTo(verticalController.offset + widget.rowHeight);
+        } else if (oldCell.rowIndex == 0 &&
+            currentCell.rowIndex == widget.source.rows.length - 1) {
+          verticalController
+              .jumpTo(verticalController.position.maxScrollExtent);
+        } else if (oldCell.rowIndex == widget.source.rows.length - 1 &&
+            currentCell.rowIndex == 0) {
+          verticalController.jumpTo(0);
+        } else if (verticalController.offset <
+                verticalController.position.maxScrollExtent &&
+            event.logicalKey == LogicalKeyboardKey.pageDown) {
+          verticalController.jumpTo(
+              verticalController.offset + widget.rowHeight * 10 <=
+                      verticalController.position.maxScrollExtent
+                  ? verticalController.offset + widget.rowHeight * 10
+                  : verticalController.position.maxScrollExtent);
+        } else if (verticalController.offset > 0 &&
+            event.logicalKey == LogicalKeyboardKey.pageUp) {
+          verticalController.jumpTo(
+              verticalController.offset - widget.rowHeight * 10 >= 0
+                  ? verticalController.offset - widget.rowHeight * 10
+                  : 0);
+        }
+      }
+      // print(oldCell.rowIndex
+      //      == 0
+      // &&
+      // currentCell.rowIndex == widget.source.rows.length - 1
+      // );
+      if (editMode != oldEditMode ||
+          currentCell.toString() != oldCell.toString() ||
+          !editMode) {
+        Future.delayed(Duration.zero, () {
+          if (mounted) setState(() {});
+        });
+      }
+    }
+  }
 
   RowColumnIndex _nextCell() {
     final nextColumn = currentCell.columnIndex == widget.columns.length - 1
@@ -865,7 +868,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           }
 
           return KeyboardListener(
-            onKeyEvent: groupByColumn == null ? widget.onKey : (_) {},
+            onKeyEvent: groupByColumn == null ? onKey : (_) {},
             // autofocus: true,
             focusNode: focusNode,
             child: scrollableGrid
