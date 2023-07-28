@@ -849,7 +849,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                     return MyExpansionTile(
                       tileHeight: widget.rowHeight,
                       initialExpanded: i == 0,
-                      title: Text(widget.groupNameBuilder?.call(group) ?? ''
+                      title: Text(widget.groupNameBuilder?.call(group) ??
+                              group.toString()
                           // group is ConstantsCard
                           //   ? group.nameForLocale
                           //   : group is DateTime
