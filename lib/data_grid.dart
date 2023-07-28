@@ -592,7 +592,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   @override
   Widget build(BuildContext context) {
     if (widget.setSelectedCell != null) widget.setSelectedCell!(currentCell);
-
+    widget.onRebuild?.call();
     // final quickInfo = context.read<QuickInfoBloc>().state;
     // if (quickInfo.showQuickInfoWidget &&
     //     currentCellValue is ConstantsCard &&
