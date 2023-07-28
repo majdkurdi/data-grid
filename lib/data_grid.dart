@@ -45,11 +45,11 @@ class XtraDataGrid extends StatefulWidget {
   final bool autoFocus;
   final bool? manualFocus;
   final FocusNode? focusNode;
-  final List<Widget> Function(BuildContext, DataGridRow, DataGridCell)?
+  final List<ContextMenuTile> Function(BuildContext, DataGridRow, DataGridCell)?
       contextMenu;
   final Map<LogicalKeyboardKey, void Function(dynamic currenctCellValue)>?
       shortcuts;
-  final void Function()? onRebuild;
+  final void Function(dynamic currenctCellValue)? onRebuild;
   final String Function(dynamic)? groupNameBuilder;
 
   void reorderColumns(int lastI, int newI) {
@@ -606,7 +606,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   @override
   Widget build(BuildContext context) {
     if (widget.setSelectedCell != null) widget.setSelectedCell!(currentCell);
-    widget.onRebuild?.call();
+    widget.onRebuild?.call(currentCellValue);
     // final quickInfo = context.read<QuickInfoBloc>().state;
     // if (quickInfo.showQuickInfoWidget &&
     //     currentCellValue is ConstantsCard &&
