@@ -531,7 +531,18 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           width: 150,
           builder: widget.contextMenu == null
               ? null
-              : (context) => widget.contextMenu!.call(context, row, cell),
+              : (context) => widget.contextMenu!.call(context, row, cell)
+                ..addAll([
+                  if (widget.source.rows.length > 1)
+                    ContextMenuTile(
+                        title: 'deleteRow'.tr,
+                        onTap: () {
+                          setState(() {
+                            Navigator.of(context).pop();
+                            widget.source.deleteRow(row);
+                          });
+                        }),
+                ]),
           child: AnimatedContainer(
             duration: Duration.zero,
             decoration: BoxDecoration(
@@ -983,6 +994,26 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         default:
       }
     }
+  }
+}
+
+class ContextMenuTile extends StatelessWidget {
+  const ContextMenuTile({
+    super.key,
+    required this.onTap,
+    required this.title,
+  });
+  final void Function() onTap;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(title, style: Get.textTheme.bodyText1),
+        ));
   }
 }
 
