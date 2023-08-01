@@ -598,10 +598,13 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     }).toList();
   }
 
-  dynamic get currentCellValue => widget.source.rows[currentCell.rowIndex].cells
-      .firstWhereOrNull((e) =>
-          e.columnName == widget.columns[currentCell.columnIndex].columnName)
-      ?.value;
+  dynamic get currentCellValue => widget.source.rows.isEmpty
+      ? null
+      : widget.source.rows[currentCell.rowIndex].cells
+          .firstWhereOrNull((e) =>
+              e.columnName ==
+              widget.columns[currentCell.columnIndex].columnName)
+          ?.value;
 
   @override
   Widget build(BuildContext context) {
