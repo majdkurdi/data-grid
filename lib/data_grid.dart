@@ -557,7 +557,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                         widget.manualFocus != false
                     ? Get.theme.colorScheme.primary.withOpacity(0.4)
                     : index.rowIndex.isEven
-                        ? null
+                        ? Colors.white
                         : Colors.grey.shade400),
             height: widget.rowHeight,
             width: column.width,
