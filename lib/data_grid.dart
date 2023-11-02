@@ -533,7 +533,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               ? null
               : (context) => [
                     ...widget.contextMenu!.call(context, row, cell),
-                    ...widget.source.buildContextMenu(cell, column, index, row),
+                    ...widget.source
+                        .buildContextMenu(context, cell, column, index, row),
                     if (widget.source.rows.length > 1)
                       ContextMenuTile(
                           title: 'deleteRow'.tr,
@@ -1051,8 +1052,8 @@ class MyDataGridSource {
     return Container();
   }
 
-  List<Widget> buildContextMenu(DataGridCell cell, MyGridColumn column,
-      RowColumnIndex cellIndex, DataGridRow row) {
+  List<Widget> buildContextMenu(BuildContext menuCtx, DataGridCell cell,
+      MyGridColumn column, RowColumnIndex cellIndex, DataGridRow row) {
     return [];
   }
 
