@@ -531,18 +531,19 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           width: 150,
           builder: widget.contextMenu == null
               ? null
-              : (context) => widget.contextMenu!.call(context, row, cell)
-                ..addAll([
-                  if (widget.source.rows.length > 1)
-                    ContextMenuTile(
-                        title: 'deleteRow'.tr,
-                        onTap: () {
-                          setState(() {
-                            Navigator.of(context).pop();
-                            widget.source.deleteRow(row);
-                          });
-                        }),
-                ]),
+              : (context) => [
+                    ...widget.contextMenu!.call(context, row, cell),
+                    ...widget.source.buildContextMenu(cell, column, index, row),
+                    if (widget.source.rows.length > 1)
+                      ContextMenuTile(
+                          title: 'deleteRow'.tr,
+                          onTap: () {
+                            setState(() {
+                              Navigator.of(context).pop();
+                              widget.source.deleteRow(row);
+                            });
+                          }),
+                  ],
           child: AnimatedContainer(
             duration: Duration.zero,
             decoration: BoxDecoration(
@@ -1048,6 +1049,11 @@ class MyDataGridSource {
   Widget build(DataGridCell cell, MyGridColumn column, RowColumnIndex cellIndex,
       DataGridRow row) {
     return Container();
+  }
+
+  List<Widget> buildContextMenu(DataGridCell cell, MyGridColumn column,
+      RowColumnIndex cellIndex, DataGridRow row) {
+    return [];
   }
 
   Widget editBuild(DataGridCell cell, String columnName,
