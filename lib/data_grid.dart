@@ -517,7 +517,10 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           if (groupByColumn == null) {
             if (editMode && currentCell.toString() != oldCell.toString()) {
               // print('sdbds')
-              await widget.source.onCellSubmit(row, oldCell, column);
+              await widget.source.onCellSubmit(
+                  widget.source.rows[oldCell.rowIndex],
+                  oldCell,
+                  widget.columns[oldCell.columnIndex]);
               editMode = false;
             } else if (!editMode &&
                 widget.columns[currentCell.columnIndex].allowEditing &&
