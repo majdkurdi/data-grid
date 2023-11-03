@@ -506,7 +506,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                 setState(() {});
               },
         onLongPress: () => widget.onLongPress?.call(row),
-        onTap: () {
+        onTap: () async {
           final oldCell = currentCell;
 
           currentCell = index;
@@ -517,7 +517,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           if (groupByColumn == null) {
             if (editMode && currentCell.toString() != oldCell.toString()) {
               // print('sdbds')
-              widget.source.onCellCancelEdit(oldCell);
+              await widget.source.onCellSubmit(row, oldCell, column);
               editMode = false;
             } else if (!editMode &&
                 widget.columns[currentCell.columnIndex].allowEditing &&
