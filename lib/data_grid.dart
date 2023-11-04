@@ -569,7 +569,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             child: editMode && index.toString() == currentCell.toString()
                 ? widget.source
                     .editBuild(cell, column.columnName, index, row, endEdit)
-                : widget.source.build(cell, column, index, row),
+                : widget.source.build(cell, column, index, row, currentCell),
           ),
         ),
       );
@@ -1051,7 +1051,7 @@ class MyDataGridSource {
   final editingController = TextEditingController();
 
   Widget build(DataGridCell cell, MyGridColumn column, RowColumnIndex cellIndex,
-      DataGridRow row) {
+      DataGridRow row, RowColumnIndex currentCell) {
     return Container();
   }
 
