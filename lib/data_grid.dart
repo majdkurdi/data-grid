@@ -25,6 +25,7 @@ class XtraDataGrid extends StatefulWidget {
       this.focusNode,
       this.manualFocus,
       this.autoFocus = true,
+      this.autoFocusGetter,
       this.contextMenu,
       this.shortcuts,
       this.onRebuild,
@@ -43,6 +44,7 @@ class XtraDataGrid extends StatefulWidget {
   final void Function(RowColumnIndex)? setSelectedCell;
   final void Function(DataGridRow)? onDoubleTap;
   final bool autoFocus;
+  final bool Function()? autoFocusGetter;
   final bool? manualFocus;
   final FocusNode? focusNode;
   final List<ContextMenuTile> Function(BuildContext, DataGridRow, DataGridCell)?
@@ -331,7 +333,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   void initState() {
     groupByColumn = widget.groupByColumn;
 
-    if (widget.autoFocus) {
+    if (widget.autoFocus || widget.autoFocusGetter?.call() == true) {
       focusNode.requestFocus();
     }
     super.initState();
@@ -622,7 +624,9 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     //         currentCellValue == quickInfo.card?.card)) {
     //   context.read<QuickInfoBloc>().add(GetCardInfo(currentCellValue));
     // }
-    if ((!editMode && widget.autoFocus) || widget.manualFocus == true) {
+    if ((!editMode &&
+            (widget.autoFocus || widget.autoFocusGetter?.call() == true)) ||
+        widget.manualFocus == true) {
       focusNode.requestFocus();
     }
     if (widget.manualFocus == false && editMode) {
