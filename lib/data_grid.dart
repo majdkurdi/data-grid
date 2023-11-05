@@ -81,6 +81,11 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   MyGridColumn? groupByColumn;
 
   void onKey(KeyEvent event) async {
+    final shiftKeys = [
+      LogicalKeyboardKey.shiftLeft,
+      LogicalKeyboardKey.shiftRight
+    ];
+
     if (event is KeyDownEvent) {
       final oldCell = currentCell;
       final oldEditMode = editMode;
@@ -184,6 +189,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                   event.logicalKey.keyLabel.replaceAll('Numpad ', '')) ||
               event.logicalKey == LogicalKeyboardKey.delete) &&
           !editMode &&
+          !RawKeyboard.instance.keysPressed.any((e) => shiftKeys.contains(e)) &&
           widget.columns[currentCell.columnIndex].allowEditing) {
         if (event.logicalKey != LogicalKeyboardKey.delete) {
           widget.source.firstChar = event.character
