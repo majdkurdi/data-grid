@@ -340,7 +340,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     groupByColumn = widget.groupByColumn;
 
     if (widget.autoFocus || widget.autoFocusGetter?.call() == true) {
-      focusNode.requestFocus();
+      Future.delayed(
+          const Duration(milliseconds: 100), () => focusNode.requestFocus());
     }
     super.initState();
   }
