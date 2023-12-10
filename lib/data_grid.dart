@@ -515,7 +515,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                 setState(() {});
               },
         onLongPress: () => widget.onLongPress?.call(row),
-        onTap: () async {
+        onTapDown: (_) async {
           final oldCell = currentCell;
 
           currentCell = index;
