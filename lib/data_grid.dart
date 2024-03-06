@@ -454,6 +454,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                                   child: Center(
                                       child: Text(
                                     e.label,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: widget.headerStyle,
                                   )),
                                 ),
