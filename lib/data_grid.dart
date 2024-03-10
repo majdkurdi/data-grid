@@ -219,7 +219,6 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         editMode = false;
         verticalController.scrollToIndex(currentCell.rowIndex, preferPosition: AutoScrollPosition.middle);
         headerController.scrollToIndex(currentCell.columnIndex, preferPosition: AutoScrollPosition.middle);
-        print('sa,cba,');
         
         // if (scrollController.hasClients &&
         //     currentCell.columnIndex != oldCell.columnIndex) {
