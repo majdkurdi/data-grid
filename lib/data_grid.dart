@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:equatable/equatable.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -1069,7 +1072,11 @@ class MyGridColumn {
       this.allowEditing = true});
 }
 
-class MyDataGridSource {
+// ignore: must_be_immutable
+class MyDataGridSource extends Equatable{
+
+  final _id = Random().nextInt(9999);
+
   List<DataGridRow> rows = <DataGridRow>[];
 
   void deleteRow(DataGridRow row) {}
@@ -1103,6 +1110,9 @@ class MyDataGridSource {
       DataGridRow row, RowColumnIndex cell, MyGridColumn column) {
     return true;
   }
+  
+  @override
+  List<Object?> get props => [_id];
 }
 
 class DataGridCell<T> {
