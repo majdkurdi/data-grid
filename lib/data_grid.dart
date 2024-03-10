@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 
 import 'consts.dart';
 import 'context_menu_edited.dart';
@@ -73,11 +74,11 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   bool editMode = false;
   // bool columnDragging = false;
   late final focusNode = widget.focusNode ?? FocusNode();
-  final scrollController = ScrollController();
-  final headerController = ScrollController();
-  final verticalController = ScrollController();
+  final scrollController = AutoScrollController();
+  final headerController = AutoScrollController();
+  final verticalController = AutoScrollController();
   // final groupsController = ScrollController();
-  final indexesController = ScrollController();
+  final indexesController = AutoScrollController();
   MyGridColumn? groupByColumn;
 
   void onKey(KeyEvent event) async {
@@ -216,67 +217,70 @@ class _XtraDataGridState extends State<XtraDataGrid> {
       }
       if (currentCell.toString() != oldCell.toString()) {
         editMode = false;
-        if (scrollController.hasClients &&
-            currentCell.columnIndex != oldCell.columnIndex) {
-          if (oldCell.columnIndex == 0 &&
-              currentCell.columnIndex == widget.columns.length - 1) {
-            scrollController.animateTo(
-                scrollController.position.maxScrollExtent,
-                duration: const Duration(milliseconds: 50),
-                curve: Curves.ease);
-          } else if (oldCell.columnIndex == widget.columns.length - 1 &&
-              currentCell.columnIndex == 0) {
-            scrollController.animateTo(0,
-                duration: const Duration(milliseconds: 50), curve: Curves.ease);
-          } else if (currentCell.columnIndex >= 5 &&
-              currentCell.columnIndex > oldCell.columnIndex &&
-              scrollController.offset !=
-                  scrollController.position.maxScrollExtent) {
-            scrollController.animateTo(scrollController.offset + 100,
-                duration: const Duration(milliseconds: 50), curve: Curves.ease);
-          } else if (currentCell.columnIndex <= widget.columns.length - 5 &&
-              currentCell.columnIndex < oldCell.columnIndex &&
-              scrollController.offset !=
-                  scrollController.position.minScrollExtent) {
-            scrollController.animateTo(scrollController.offset - 100,
-                duration: const Duration(milliseconds: 50), curve: Curves.ease);
-          }
-        }
-        if (oldCell.rowIndex <= widget.source.rows.length - 7 &&
-            currentCell.rowIndex < oldCell.rowIndex &&
-            verticalController.offset != 0 &&
-            event.logicalKey != LogicalKeyboardKey.pageUp) {
-          verticalController
-              .jumpTo(verticalController.offset - widget.rowHeight);
-        } else if (oldCell.rowIndex >= 7 &&
-            currentCell.rowIndex > oldCell.rowIndex &&
-            verticalController.offset !=
-                verticalController.position.maxScrollExtent &&
-            event.logicalKey != LogicalKeyboardKey.pageDown) {
-          verticalController
-              .jumpTo(verticalController.offset + widget.rowHeight);
-        } else if (oldCell.rowIndex == 0 &&
-            currentCell.rowIndex == widget.source.rows.length - 1) {
-          verticalController
-              .jumpTo(verticalController.position.maxScrollExtent);
-        } else if (oldCell.rowIndex == widget.source.rows.length - 1 &&
-            currentCell.rowIndex == 0) {
-          verticalController.jumpTo(0);
-        } else if (verticalController.offset <
-                verticalController.position.maxScrollExtent &&
-            event.logicalKey == LogicalKeyboardKey.pageDown) {
-          verticalController.jumpTo(
-              verticalController.offset + widget.rowHeight * 10 <=
-                      verticalController.position.maxScrollExtent
-                  ? verticalController.offset + widget.rowHeight * 10
-                  : verticalController.position.maxScrollExtent);
-        } else if (verticalController.offset > 0 &&
-            event.logicalKey == LogicalKeyboardKey.pageUp) {
-          verticalController.jumpTo(
-              verticalController.offset - widget.rowHeight * 10 >= 0
-                  ? verticalController.offset - widget.rowHeight * 10
-                  : 0);
-        }
+        verticalController.scrollToIndex(currentCell.rowIndex);
+        headerController.scrollToIndex(currentCell.columnIndex);
+        
+        // if (scrollController.hasClients &&
+        //     currentCell.columnIndex != oldCell.columnIndex) {
+        //   if (oldCell.columnIndex == 0 &&
+        //       currentCell.columnIndex == widget.columns.length - 1) {
+        //     scrollController.animateTo(
+        //         scrollController.position.maxScrollExtent,
+        //         duration: const Duration(milliseconds: 50),
+        //         curve: Curves.ease);
+        //   } else if (oldCell.columnIndex == widget.columns.length - 1 &&
+        //       currentCell.columnIndex == 0) {
+        //     scrollController.animateTo(0,
+        //         duration: const Duration(milliseconds: 50), curve: Curves.ease);
+        //   } else if (currentCell.columnIndex >= 5 &&
+        //       currentCell.columnIndex > oldCell.columnIndex &&
+        //       scrollController.offset !=
+        //           scrollController.position.maxScrollExtent) {
+        //     scrollController.animateTo(scrollController.offset + 100,
+        //         duration: const Duration(milliseconds: 50), curve: Curves.ease);
+        //   } else if (currentCell.columnIndex <= widget.columns.length - 5 &&
+        //       currentCell.columnIndex < oldCell.columnIndex &&
+        //       scrollController.offset !=
+        //           scrollController.position.minScrollExtent) {
+        //     scrollController.animateTo(scrollController.offset - 100,
+        //         duration: const Duration(milliseconds: 50), curve: Curves.ease);
+        //   }
+        // }
+        // if (oldCell.rowIndex <= widget.source.rows.length - 7 &&
+        //     currentCell.rowIndex < oldCell.rowIndex &&
+        //     verticalController.offset != 0 &&
+        //     event.logicalKey != LogicalKeyboardKey.pageUp) {
+        //   verticalController
+        //       .jumpTo(verticalController.offset - widget.rowHeight);
+        // } else if (oldCell.rowIndex >= 7 &&
+        //     currentCell.rowIndex > oldCell.rowIndex &&
+        //     verticalController.offset !=
+        //         verticalController.position.maxScrollExtent &&
+        //     event.logicalKey != LogicalKeyboardKey.pageDown) {
+        //   verticalController
+        //       .jumpTo(verticalController.offset + widget.rowHeight);
+        // } else if (oldCell.rowIndex == 0 &&
+        //     currentCell.rowIndex == widget.source.rows.length - 1) {
+        //   verticalController
+        //       .jumpTo(verticalController.position.maxScrollExtent);
+        // } else if (oldCell.rowIndex == widget.source.rows.length - 1 &&
+        //     currentCell.rowIndex == 0) {
+        //   verticalController.jumpTo(0);
+        // } else if (verticalController.offset <
+        //         verticalController.position.maxScrollExtent &&
+        //     event.logicalKey == LogicalKeyboardKey.pageDown) {
+        //   verticalController.jumpTo(
+        //       verticalController.offset + widget.rowHeight * 10 <=
+        //               verticalController.position.maxScrollExtent
+        //           ? verticalController.offset + widget.rowHeight * 10
+        //           : verticalController.position.maxScrollExtent);
+        // } else if (verticalController.offset > 0 &&
+        //     event.logicalKey == LogicalKeyboardKey.pageUp) {
+        //   verticalController.jumpTo(
+        //       verticalController.offset - widget.rowHeight * 10 >= 0
+        //           ? verticalController.offset - widget.rowHeight * 10
+        //           : 0);
+        // }
       }
       // print(oldCell.rowIndex
       //      == 0
@@ -693,22 +697,28 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                             //   }
                             // },
                             children: widget.columns.map<Widget>((e) {
-                              return MouseRegion(
-                                cursor: widget.onColumnsReorder != null
-                                    ? SystemMouseCursors.grab
-                                    : SystemMouseCursors.basic,
-                                // key: ValueKey(e.columnName),
-                                child: Builder(
-                                  builder: (ct) {
-                                    return !scrollableGrid &&
-                                            widget.columns.last == e
-                                        ? SizedBox(
-                                            height: widget.rowHeight,
-                                            width: spaceForLastColumn,
-                                            child: _headerCell(e),
-                                          )
-                                        : _headerCell(e);
-                                  },
+                              final i = widget.columns.indexOf(e);
+                              return AutoScrollTag(
+                                index: i,
+                                controller: headerController,
+                                key: ValueKey(i),
+                                child: MouseRegion(
+                                  cursor: widget.onColumnsReorder != null
+                                      ? SystemMouseCursors.grab
+                                      : SystemMouseCursors.basic,
+                                  // key: ValueKey(e.columnName),
+                                  child: Builder(
+                                    builder: (ct) {
+                                      return !scrollableGrid &&
+                                              widget.columns.last == e
+                                          ? SizedBox(
+                                              height: widget.rowHeight,
+                                              width: spaceForLastColumn,
+                                              child: _headerCell(e),
+                                            )
+                                          : _headerCell(e);
+                                    },
+                                  ),
                                 ),
                               );
                             }).toList()
@@ -723,8 +733,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                 ),
               );
           Widget grid(List<DataGridRow> rows,
-                  [ScrollController? controller,
-                  ScrollController? bindingController]) =>
+                  [AutoScrollController? controller,
+                  AutoScrollController? bindingController]) =>
               Column(
                 children: [
                   NotificationListener(
@@ -744,25 +754,30 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                           physics: const ClampingScrollPhysics(),
                           controller: controller ?? verticalController,
                           itemCount: rows.length,
-                          itemBuilder: (ctx, i) => SizedBox(
-                            height: widget.rowHeight,
-                            child: Row(
-                              children: widget.columns.map((column) {
-                                final cell = rows[i]
-                                    .getCells()
-                                    // [widget.columns.indexOf(column)];
-                                    .firstWhere((c) =>
-                                        c.columnName == column.columnName);
-                                final index = RowColumnIndex(
-                                    i, widget.columns.indexOf(column));
+                          itemBuilder: (ctx, i) => AutoScrollTag(
+                            controller: controller ?? verticalController,
+                            key: ValueKey(i),
+                            index: i,
+                            child: SizedBox(
+                              height: widget.rowHeight,
+                              child: Row(
+                                children: widget.columns.map((column) {
+                                  final cell = rows[i]
+                                      .getCells()
+                                      // [widget.columns.indexOf(column)];
+                                      .firstWhere((c) =>
+                                          c.columnName == column.columnName);
+                                  final index = RowColumnIndex(
+                                      i, widget.columns.indexOf(column));
 
-                                return !scrollableGrid &&
-                                        widget.columns.last == column
-                                    ? Expanded(
-                                        child: _gridCell(
-                                            index, rows[i], column, cell))
-                                    : _gridCell(index, rows[i], column, cell);
-                              }).toList(),
+                                  return !scrollableGrid &&
+                                          widget.columns.last == column
+                                      ? Expanded(
+                                          child: _gridCell(
+                                              index, rows[i], column, cell))
+                                      : _gridCell(index, rows[i], column, cell);
+                                }).toList(),
+                              ),
                             ),
                           ),
                         ),
@@ -773,8 +788,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               );
 
           Widget indexes(List<DataGridRow> rows,
-                  [ScrollController? controller,
-                  ScrollController? bindingController]) =>
+                  [AutoScrollController? controller,
+                  AutoScrollController? bindingController]) =>
               Column(
                 children: [
                   NotificationListener(
@@ -865,8 +880,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                   itemBuilder: (ctx, i) {
                     final group = groups[i];
                     final items = getGroupsItems(group);
-                    final gController = ScrollController();
-                    final iController = ScrollController();
+                    final gController = AutoScrollController();
+                    final iController = AutoScrollController();
                     return MyExpansionTile(
                       tileHeight: widget.rowHeight,
                       initialExpanded: i == 0,

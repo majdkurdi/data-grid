@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
   get: ^4.6.5
   contextmenu: ^3.0.0
+  scroll_to_index: ^3.0.1
 
 dev_dependencies:
   flutter_test:
