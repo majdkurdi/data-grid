@@ -220,9 +220,11 @@ class _XtraDataGridState extends State<XtraDataGrid> {
       }
       if (currentCell.toString() != oldCell.toString()) {
         editMode = false;
-        // verticalController.scrollToIndex(currentCell.rowIndex, preferPosition: AutoScrollPosition.middle);
-        // headerController.scrollToIndex(currentCell.columnIndex, preferPosition: AutoScrollPosition.middle);
+        Future.delayed(Duration.zero,  () {
+          verticalController.scrollToIndex(currentCell.rowIndex, preferPosition: AutoScrollPosition.middle);
+        headerController.scrollToIndex(currentCell.columnIndex, preferPosition: AutoScrollPosition.middle);
         
+        });
         // if (scrollController.hasClients &&
         //     currentCell.columnIndex != oldCell.columnIndex) {
         //   if (oldCell.columnIndex == 0 &&
