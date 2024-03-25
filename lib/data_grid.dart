@@ -682,7 +682,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                           return true;
                         },
                         child: ListView(
-                            physics: scrollableGrid ?  const ClampingScrollPhysics() :const NeverScrollableScrollPhysics(),
+                            physics:   const ClampingScrollPhysics(),
                             controller: headerController,
                             // dragStartBehavior: DragStartBehavior.down,
                             // onReorderStart: (index) => print(index),
@@ -718,7 +718,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                                               widget.columns.last == e
                                           ? SizedBox(
                                               height: widget.rowHeight,
-                                              width: spaceForLastColumn,
+                                              width: spaceForLastColumn - 30,
                                               child: _headerCell(e),
                                             )
                                           : _headerCell(e);
