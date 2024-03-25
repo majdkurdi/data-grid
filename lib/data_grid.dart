@@ -681,57 +681,60 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                           }
                           return true;
                         },
-                        child: ListView(
-                            physics: const ClampingScrollPhysics(),
-                            controller: headerController,
-                            // dragStartBehavior: DragStartBehavior.down,
-                            // onReorderStart: (index) => print(index),
-                            scrollDirection: Axis.horizontal,
-                            // buildDefaultDragHandles: false,
-                            // physics: const NeverScrollableScrollPhysics(),
-                            // shrinkWrap: true,
-                            // onReorderStart: (_) {
-                            //   print('start');
-                            //   setState(() => columnDragging = true);
-                            // },
-                            // onReorderEnd: (_) =>
-                            //     setState(() => columnDragging = false),
-                            // onReorder: (oldI, newI) {
-                            //   if (widget.onColumnsReorder != null) {
-                            //     widget.onColumnsReorder!(oldI, newI);
-                            //   }
-                            // },
-                            children: widget.columns.map<Widget>((e) {
-                              final i = widget.columns.indexOf(e);
-                              return AutoScrollTag(
-                                index: i,
-                                controller: headerController,
-                                key: ValueKey(i),
-                                child: MouseRegion(
-                                  cursor: widget.onColumnsReorder != null
-                                      ? SystemMouseCursors.grab
-                                      : SystemMouseCursors.basic,
-                                  // key: ValueKey(e.columnName),
-                                  child: Builder(
-                                    builder: (ct) {
-                                      return !scrollableGrid &&
-                                              widget.columns.last == e
-                                          ? SizedBox(
-                                              height: widget.rowHeight,
-                                              width: spaceForLastColumn,
-                                              child: _headerCell(e),
-                                            )
-                                          : _headerCell(e);
-                                    },
+                        child: SizedBox(
+                        width: scrollableGrid ? requiredWidth : null,
+                          child: ListView(
+                              physics: const ClampingScrollPhysics(),
+                              controller: headerController,
+                              // dragStartBehavior: DragStartBehavior.down,
+                              // onReorderStart: (index) => print(index),
+                              scrollDirection: Axis.horizontal,
+                              // buildDefaultDragHandles: false,
+                              // physics: const NeverScrollableScrollPhysics(),
+                              // shrinkWrap: true,
+                              // onReorderStart: (_) {
+                              //   print('start');
+                              //   setState(() => columnDragging = true);
+                              // },
+                              // onReorderEnd: (_) =>
+                              //     setState(() => columnDragging = false),
+                              // onReorder: (oldI, newI) {
+                              //   if (widget.onColumnsReorder != null) {
+                              //     widget.onColumnsReorder!(oldI, newI);
+                              //   }
+                              // },
+                              children: widget.columns.map<Widget>((e) {
+                                final i = widget.columns.indexOf(e);
+                                return AutoScrollTag(
+                                  index: i,
+                                  controller: headerController,
+                                  key: ValueKey(i),
+                                  child: MouseRegion(
+                                    cursor: widget.onColumnsReorder != null
+                                        ? SystemMouseCursors.grab
+                                        : SystemMouseCursors.basic,
+                                    // key: ValueKey(e.columnName),
+                                    child: Builder(
+                                      builder: (ct) {
+                                        return !scrollableGrid &&
+                                                widget.columns.last == e
+                                            ? SizedBox(
+                                                height: widget.rowHeight,
+                                                width: spaceForLastColumn,
+                                                child: _headerCell(e),
+                                              )
+                                            : _headerCell(e);
+                                      },
+                                    ),
                                   ),
-                                ),
-                              );
-                            }).toList()
-                            // ..insert(
-                            //     0,
-                            //     _headerCell(MyGridColumn(
-                            //         label: '', columnName: 'index', width: 30))),
-                            ),
+                                );
+                              }).toList()
+                              // ..insert(
+                              //     0,
+                              //     _headerCell(MyGridColumn(
+                              //         label: '', columnName: 'index', width: 30))),
+                              ),
+                        ),
                       ),
                     ),
                   ],
