@@ -671,8 +671,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                 height: widget.rowHeight,
                 child: Row(
                   children: [
-                    // _headerCell(MyGridColumn(
-                    //     label: '', columnName: 'index', width: 30)),
+                    _headerCell(MyGridColumn(
+                        label: '', columnName: 'index', width: 30)),
                     Expanded(
                       child: NotificationListener(
                         onNotification: (ScrollNotification scrollInfo) {
@@ -682,7 +682,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                           return true;
                         },
                         child: ListView(
-                            physics: const ClampingScrollPhysics(),
+                            physics: scrollableGrid ?  const ClampingScrollPhysics() :const NeverScrollableScrollPhysics(),
                             controller: headerController,
                             // dragStartBehavior: DragStartBehavior.down,
                             // onReorderStart: (index) => print(index),
