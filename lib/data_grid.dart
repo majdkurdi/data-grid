@@ -558,7 +558,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                     ...widget.contextMenu!.call(context, row, cell),
                     ...widget.source
                         .buildContextMenu(context, cell, column, index, row),
-                    if (widget.source.rows.length > 1)
+                    if (widget.source.rows.length > 1 && column.allowEditing)
                       ContextMenuTile(
                           title: 'deleteRow'.tr,
                           onTap: () {
