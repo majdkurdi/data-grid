@@ -64,8 +64,10 @@ class XtraDataGrid extends StatefulWidget {
   }
 
   void resizeColumn(MyGridColumn c, double dx, {double? fixWidth}) {
-    if(fixWidth != null) {
-    columns.firstWhere((element) => element.columnName == c.columnName).width = fixWidth;
+    if (fixWidth != null) {
+      columns
+          .firstWhere((element) => element.columnName == c.columnName)
+          .width = fixWidth;
     }
   }
 
@@ -93,7 +95,6 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   }
 
   void adjustColumnWidth(MyGridColumn column) {
-    
     double w = 0;
     for (var key in cellsKeys[column.columnName] ?? <GlobalKey>[]) {
       final context = key.currentContext;
@@ -106,10 +107,9 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         }
       }
     }
-    if (w > 50) {
-      widget.resizeColumn(column, w-column.width, fixWidth: w>50 ? null : 50);
-      setState(() {});
-    }
+
+    widget.resizeColumn(column, w - column.width, fixWidth: w > 50 ? null : 50);
+    setState(() {});
   }
 
   void onKey(KeyEvent event) async {
@@ -627,7 +627,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             child: editMode && index.toString() == currentCell.toString()
                 ? widget.source
                     .editBuild(cell, column.columnName, index, row, endEdit)
-                : widget.source.build(cell, column, index, row, currentCell, key),
+                : widget.source
+                    .build(cell, column, index, row, currentCell, key),
           ),
         ),
       );
