@@ -98,7 +98,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         widget.columns.map((e) => MapEntry(e.columnName, <GlobalKey>[])));
   }
 
-  void adjustColumnWidth(MyGridColumn column) {
+  void adjustColumnWidth(MyGridColumn column, {bool rebuild = true}) {
     double w = 0;
     for (var key in cellsKeys[column.columnName] ?? <GlobalKey>[]) {
       final context = key.currentContext;
@@ -113,6 +113,13 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     }
 
     widget.resizeColumn(column, w - column.width, fixWidth: w > 50 ? null : 50);
+    if (rebuild) setState(() {});
+  }
+
+  void adjustAllColumns() {
+    for (var i in widget.columns) {
+      adjustColumnWidth(i, rebuild: false);
+    }
     setState(() {});
   }
 
@@ -433,13 +440,18 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     return ContextMenuEdited(
       width: 150,
       builder: (c) => [
-        // if(widget.columns.indexOf(e) != widget.columns.length -1)
         ContextMenuTile(
             onTap: () {
               Navigator.of(c).pop();
               adjustColumnWidth(e);
             },
-            title: 'autoFill'),
+            title: 'autoFill'.tr),
+        ContextMenuTile(
+            onTap: () {
+              Navigator.of(c).pop();
+              adjustAllColumns();
+            },
+            title: 'autoFillAllFields'.tr),
         ...e.contextMenuItems?.call(c) ?? [],
       ],
       child: Container(
