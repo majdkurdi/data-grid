@@ -92,15 +92,14 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   }
 
   void adjustColumnWidth(MyGridColumn column) {
-    print(column.width);
-    print('column.width');
+    
     double w = 0;
     for (var key in cellsKeys[column.columnName] ?? <GlobalKey>[]) {
       final context = key.currentContext;
       if (context != null) {
         final RenderBox box = context.findRenderObject() as RenderBox;
-        final width = box.getMaxIntrinsicWidth(double.infinity);
-        print(width);
+        double width = box.getMaxIntrinsicWidth(double.infinity);
+        width += 8;
         if (width > w) {
           w = width;
         }
