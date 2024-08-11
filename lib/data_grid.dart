@@ -92,12 +92,15 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   }
 
   void adjustColumnWidth(MyGridColumn column) {
+    print(column.width);
+    print('column.width');
     double w = 0;
     for (var key in cellsKeys[column.columnName] ?? <GlobalKey>[]) {
       final context = key.currentContext;
       if (context != null) {
         final RenderBox box = context.findRenderObject() as RenderBox;
         final width = box.getMaxIntrinsicWidth(double.infinity);
+        print(width);
         if (width > w) {
           w = width;
         }
@@ -427,7 +430,12 @@ class _XtraDataGridState extends State<XtraDataGrid> {
       width: 150,
       builder: (c) => [
         // if(widget.columns.indexOf(e) != widget.columns.length -1)
-        ContextMenuTile(onTap: () => adjustColumnWidth(e), title: 'autoFill'),
+        ContextMenuTile(
+            onTap: () {
+              Navigator.of(c).pop();
+              adjustColumnWidth(e);
+            },
+            title: 'autoFill'),
         ...e.contextMenuItems?.call(c) ?? [],
       ],
       child: Container(
