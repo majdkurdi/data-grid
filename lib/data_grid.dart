@@ -105,10 +105,10 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         }
       }
     }
-    if (w > 50) {
-      widget.resizeColumn(column, w-column.width);
+    
+      widget.resizeColumn(column,w > 50 ? w-column.width : 50-column.width);
       setState(() {});
-    }
+    
   }
 
   void onKey(KeyEvent event) async {
