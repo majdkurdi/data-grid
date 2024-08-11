@@ -445,13 +445,13 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               Navigator.of(c).pop();
               adjustColumnWidth(e);
             },
-            title: 'autoFill'.tr),
+            title: 'autoFit'.tr),
         ContextMenuTile(
             onTap: () {
               Navigator.of(c).pop();
               adjustAllColumns();
             },
-            title: 'autoFillAllFields'.tr),
+            title: 'autoFitAllFields'.tr),
         ...e.contextMenuItems?.call(c) ?? [],
       ],
       child: Container(
