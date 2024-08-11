@@ -426,6 +426,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     return ContextMenuEdited(
       width: 150,
       builder: (c) => [
+        // if(widget.columns.indexOf(e) != widget.columns.length -1)
         ContextMenuTile(onTap: () => adjustColumnWidth(e), title: 'autoFill'),
         ...e.contextMenuItems?.call(c) ?? [],
       ],
