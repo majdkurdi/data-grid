@@ -102,14 +102,14 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     double w = 0;
     for (var key in cellsKeys[column.columnName] ?? <GlobalKey>[]) {
       final context = key.currentContext;
-      if (context != null) {
+      if (context == null) return;
         final RenderBox box = context.findRenderObject() as RenderBox;
         double width = box.getMaxIntrinsicWidth(double.infinity);
         width += 8;
         if (width > w) {
           w = width;
         }
-      }
+      
     }
 
     widget.resizeColumn(column, w - column.width, fixWidth: w > 50 ? null : 50);
