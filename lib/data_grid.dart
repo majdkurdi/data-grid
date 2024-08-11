@@ -100,12 +100,12 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         final RenderBox box = context.findRenderObject() as RenderBox;
         double width = box.getMaxIntrinsicWidth(double.infinity);
         width += 8;
-        if (width > 50) {
+        if (width > w) {
           w = width;
         }
       }
     }
-    if (w > column.width) {
+    if (w > 50) {
       widget.resizeColumn(column, w-column.width);
       setState(() {});
     }
