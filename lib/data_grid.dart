@@ -68,6 +68,10 @@ class XtraDataGrid extends StatefulWidget {
       columns
           .firstWhere((element) => element.columnName == c.columnName)
           .width = fixWidth;
+    } else {
+      columns
+          .firstWhere((element) => element.columnName == c.columnName)
+          .width += dx;
     }
   }
 
