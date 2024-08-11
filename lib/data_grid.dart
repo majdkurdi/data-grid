@@ -607,7 +607,6 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                           }),
                   ],
           child: AnimatedContainer(
-            key: key,
             duration: Duration.zero,
             decoration: BoxDecoration(
                 border: Border.all(
@@ -628,7 +627,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             child: editMode && index.toString() == currentCell.toString()
                 ? widget.source
                     .editBuild(cell, column.columnName, index, row, endEdit)
-                : widget.source.build(cell, column, index, row, currentCell),
+                : widget.source.build(cell, column, index, row, currentCell, key),
           ),
         ),
       );
@@ -1130,7 +1129,7 @@ class MyDataGridSource extends Equatable {
   final editingController = TextEditingController();
 
   Widget build(DataGridCell cell, MyGridColumn column, RowColumnIndex cellIndex,
-      DataGridRow row, RowColumnIndex currentCell) {
+      DataGridRow row, RowColumnIndex currentCell, GlobalKey key) {
     return Container();
   }
 
