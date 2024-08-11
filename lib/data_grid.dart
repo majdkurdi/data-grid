@@ -63,9 +63,10 @@ class XtraDataGrid extends StatefulWidget {
     columns.insert(newI, c);
   }
 
-  void resizeColumn(MyGridColumn c, double dx) {
-    columns.firstWhere((element) => element.columnName == c.columnName).width +=
-        dx;
+  void resizeColumn(MyGridColumn c, double dx, {double? fixWidth}) {
+    if(fixWidth != null) {
+    columns.firstWhere((element) => element.columnName == c.columnName).width = fixWidth;
+    }
   }
 
   @override
@@ -105,10 +106,10 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         }
       }
     }
-    
-      widget.resizeColumn(column,w > 50 ? w-column.width : 50-column.width);
+    if (w > 50) {
+      widget.resizeColumn(column, w-column.width, fixWidth: w>50 ? null : 50);
       setState(() {});
-    
+    }
   }
 
   void onKey(KeyEvent event) async {
