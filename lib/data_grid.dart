@@ -83,6 +83,31 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   // final groupsController = ScrollController();
   final indexesController = AutoScrollController();
   MyGridColumn? groupByColumn;
+  late Map<String, List<GlobalKey>> cellsKeys = Map.fromEntries(
+      widget.columns.map((e) => MapEntry(e.columnName, <GlobalKey>[])));
+
+  void resetKeys() {
+    cellsKeys = Map.fromEntries(
+        widget.columns.map((e) => MapEntry(e.columnName, <GlobalKey>[])));
+  }
+
+  void adjustColumnWidth(MyGridColumn column) {
+    double w = 0;
+    for (var key in cellsKeys[column.columnName] ?? <GlobalKey>[]) {
+      final context = key.currentContext;
+      if (context != null) {
+        final RenderBox box = context.findRenderObject() as RenderBox;
+        final width = box.getMaxIntrinsicWidth(double.infinity);
+        if (width > w) {
+          w = width;
+        }
+      }
+    }
+    if (w > column.width) {
+      widget.resizeColumn(column, column.width - w);
+      setState(() {});
+    }
+  }
 
   void onKey(KeyEvent event) async {
     final shiftKeys = [
@@ -220,10 +245,11 @@ class _XtraDataGridState extends State<XtraDataGrid> {
       }
       if (currentCell.toString() != oldCell.toString()) {
         editMode = false;
-        Future.delayed(Duration.zero,  () {
-          verticalController.scrollToIndex(currentCell.rowIndex, preferPosition: AutoScrollPosition.middle);
-        headerController.scrollToIndex(currentCell.columnIndex, preferPosition: AutoScrollPosition.middle);
-        
+        Future.delayed(Duration.zero, () {
+          verticalController.scrollToIndex(currentCell.rowIndex,
+              preferPosition: AutoScrollPosition.middle);
+          headerController.scrollToIndex(currentCell.columnIndex,
+              preferPosition: AutoScrollPosition.middle);
         });
         // if (scrollController.hasClients &&
         //     currentCell.columnIndex != oldCell.columnIndex) {
@@ -399,7 +425,10 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   Widget _headerCell(MyGridColumn e) {
     return ContextMenuEdited(
       width: 150,
-      builder: e.contextMenuItems,
+      builder: (c) => [
+        ContextMenuTile(onTap: () => adjustColumnWidth(e), title: 'autoFill'),
+        ...e.contextMenuItems?.call(c) ?? [],
+      ],
       child: Container(
         // key: ValueKey(e.columnName),
         // duration: Duration.zero,
@@ -501,7 +530,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   }
 
   Widget _gridCell(RowColumnIndex index, DataGridRow row, MyGridColumn column,
-          DataGridCell cell) =>
+          DataGridCell cell, GlobalKey key) =>
       GestureDetector(
         onDoubleTap: widget.onDoubleTap != null
             ? () => widget.onDoubleTap!(row)
@@ -569,6 +598,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                           }),
                   ],
           child: AnimatedContainer(
+            key: key,
             duration: Duration.zero,
             decoration: BoxDecoration(
                 border: Border.all(
@@ -633,6 +663,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
 
   @override
   Widget build(BuildContext context) {
+    cellsKeys = Map.fromEntries(
+        widget.columns.map((e) => MapEntry(e.columnName, <GlobalKey>[])));
     if (widget.setSelectedCell != null) widget.setSelectedCell!(currentCell);
     widget.onRebuild?.call(currentCellValue);
     // final quickInfo = context.read<QuickInfoBloc>().state;
@@ -682,7 +714,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                           return true;
                         },
                         child: ListView(
-                            physics:   const ClampingScrollPhysics(),
+                            physics: const ClampingScrollPhysics(),
                             controller: headerController,
                             // dragStartBehavior: DragStartBehavior.down,
                             // onReorderStart: (index) => print(index),
@@ -774,13 +806,15 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                                           c.columnName == column.columnName);
                                   final index = RowColumnIndex(
                                       i, widget.columns.indexOf(column));
-
+                                  final k = GlobalKey();
+                                  cellsKeys[column.columnName]?.add(k);
                                   return !scrollableGrid &&
                                           widget.columns.last == column
                                       ? Expanded(
                                           child: _gridCell(
-                                              index, rows[i], column, cell))
-                                      : _gridCell(index, rows[i], column, cell);
+                                              index, rows[i], column, cell, k))
+                                      : _gridCell(
+                                          index, rows[i], column, cell, k);
                                 }).toList(),
                               ),
                             ),
@@ -1075,8 +1109,7 @@ class MyGridColumn {
 }
 
 // ignore: must_be_immutable
-class MyDataGridSource extends Equatable{
-
+class MyDataGridSource extends Equatable {
   final _id = Random().nextInt(9999);
 
   List<DataGridRow> rows = <DataGridRow>[];
@@ -1112,7 +1145,7 @@ class MyDataGridSource extends Equatable{
       DataGridRow row, RowColumnIndex cell, MyGridColumn column) {
     return true;
   }
-  
+
   @override
   List<Object?> get props => [_id];
 }
