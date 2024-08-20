@@ -1113,7 +1113,7 @@ class ContextMenuTile extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(title, style: Get.textTheme.bodyText1),
+          child: Text(title, style: Get.textTheme.bodySmall),
         ));
   }
 }
