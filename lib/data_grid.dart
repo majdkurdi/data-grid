@@ -160,7 +160,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               currentCell.rowIndex + 10, currentCell.columnIndex));
         }
       } else if (event.logicalKey == LogicalKeyboardKey.arrowUp && !editMode) {
-        if (RawKeyboard.instance.keysPressed
+        if (HardwareKeyboard.instance.logicalKeysPressed
             .contains(LogicalKeyboardKey.home)) {
           currentCell = RowColumnIndex(0, 0);
         } else {
@@ -187,7 +187,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         widget.source.onCellCancelEdit(currentCell);
         editMode = false;
       } else if (event.logicalKey == LogicalKeyboardKey.enter) {
-        if (RawKeyboard.instance.keysPressed.any((e) => [
+        if (HardwareKeyboard.instance.logicalKeysPressed.any((e) => [
               LogicalKeyboardKey.controlLeft,
               LogicalKeyboardKey.controlRight
             ].contains(e))) {
@@ -214,7 +214,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             currentCell,
             widget.columns[currentCell.columnIndex]);
       } else if (event.logicalKey == LogicalKeyboardKey.tab) {
-        final keysPressed = RawKeyboard.instance.keysPressed;
+        final keysPressed = HardwareKeyboard.instance.logicalKeysPressed;
         final shiftPressed =
             keysPressed.contains(LogicalKeyboardKey.shiftLeft) ||
                 keysPressed.contains(LogicalKeyboardKey.shiftRight);
@@ -232,7 +232,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                   event.logicalKey.keyLabel.replaceAll('Numpad ', '')) ||
               event.logicalKey == LogicalKeyboardKey.delete) &&
           !editMode &&
-          !RawKeyboard.instance.keysPressed.any((e) => shiftKeys.contains(e)) &&
+          !HardwareKeyboard.instance.logicalKeysPressed.any((e) => shiftKeys.contains(e)) &&
           widget.columns[currentCell.columnIndex].allowEditing) {
         if (event.logicalKey != LogicalKeyboardKey.delete) {
           widget.source.firstChar = event.character
