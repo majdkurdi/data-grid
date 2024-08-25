@@ -83,7 +83,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   RowColumnIndex currentCell = RowColumnIndex(0, 0);
   bool editMode = false;
   // bool columnDragging = false;
-  late final focusNode = widget.focusNode ?? FocusNode(debugLabel: widget.key.toString());
+  late final focusNode = widget.focusNode ?? FocusNode(debugLabel: widget.hashCode.toString());
   final scrollController = AutoScrollController();
   final headerController = AutoScrollController();
   final verticalController = AutoScrollController();
