@@ -581,8 +581,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               },
         onLongPress: () => widget.onLongPress?.call(row),
         onTapDown: (_) async {
+            focusNode.requestFocus();
           // Future.delayed(Duration(milliseconds: 1000), () {
-          //   focusNode.requestFocus();
           // print(focusNode.hasFocus);
           // });
           final oldCell = currentCell;
