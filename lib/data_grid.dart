@@ -982,10 +982,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               ),
             );
           }
-          focusNode.addListener(() {
-  debugPrint('FocusNode has focus: ${focusNode.hasFocus}');
-});
-
+         
           return KeyboardListener(
             onKeyEvent: groupByColumn == null ? onKey : (_) {},
             // autofocus: true,
