@@ -83,7 +83,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   RowColumnIndex currentCell = RowColumnIndex(0, 0);
   bool editMode = false;
   // bool columnDragging = false;
-  late final focusNode = widget.focusNode ?? FocusNode(debugLabel: widget.hashCode.toString());
+  late final focusNode = widget.focusNode ?? FocusNode();
   final scrollController = AutoScrollController();
   final headerController = AutoScrollController();
   final verticalController = AutoScrollController();
@@ -983,7 +983,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             );
           }
           focusNode.addListener(() {
-  debugPrint('${focusNode.debugLabel} has focus: ${focusNode.hasFocus}');
+  debugPrint('FocusNode has focus: ${focusNode.hasFocus}');
 });
 
           return KeyboardListener(
