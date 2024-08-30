@@ -740,7 +740,6 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                           if (scrollController.hasClients &&
                               scrollController.position.pixels !=
                                   scrollInfo.metrics.pixels) {
-                                    print('object');
                             scrollController.jumpTo(scrollInfo.metrics.pixels);
                           }
                           return true;
@@ -815,6 +814,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                               scrollInfo.metrics.pixels) {
                         (bindingController ?? indexesController)
                             .jumpTo(scrollInfo.metrics.pixels);
+                                    print('object');
+
                       }
                       return true;
                     },
