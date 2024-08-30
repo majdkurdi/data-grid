@@ -881,6 +881,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                       child: SizedBox(
                         width: 30,
                         child: ListView.builder(
+                          physics: const ClampingScrollPhysics(),
                           prototypeItem: SizedBox(height: widget.rowHeight),
                           controller: controller ?? indexesController,
                           itemCount: rows.length,
