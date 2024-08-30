@@ -393,16 +393,6 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           const Duration(milliseconds: 100), () => focusNode.requestFocus());
     }
     super.initState();
-    Future.delayed(Duration(seconds: 2), () {
-      print('verticalController.position.pixels');
-    print(verticalController.position.pixels);
-    print('indexesController.position.pixels');
-    print(indexesController.position.pixels);
-    print('headerController.position.pixels');
-    print(headerController.position.pixels);
-    print('scrollController.position.pixels');
-    print(scrollController.position.pixels);
-    });
   }
 
   @override
@@ -750,6 +740,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                           if (scrollController.hasClients &&
                               scrollController.position.pixels !=
                                   scrollInfo.metrics.pixels) {
+                                    print('object');
                             scrollController.jumpTo(scrollInfo.metrics.pixels);
                           }
                           return true;
