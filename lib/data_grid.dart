@@ -989,6 +989,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             focusNode: focusNode,
             child: scrollableGrid
                 ? Scrollbar(
+                  trackVisibility: true,
                     controller: scrollController,
                     thumbVisibility: true,
                     scrollbarOrientation: ScrollbarOrientation.bottom,
