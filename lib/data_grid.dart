@@ -993,49 +993,39 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                     controller: scrollController,
                     thumbVisibility: true,
                     scrollbarOrientation: ScrollbarOrientation.bottom,
-                    child: Scrollbar(
-                      // trackVisibility: true,
-                      controller: verticalController,
-                      thumbVisibility: verticalController.hasClients &&
-                          groupByColumn == null,
-                      interactive: true,
-                      scrollbarOrientation: arabicLocale
-                          ? ScrollbarOrientation.left
-                          : ScrollbarOrientation.right,
-                      child: Column(
-                        children: [
-                          headers(),
-                          Expanded(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (groupByColumn == null)
-                                  indexes(widget.source.rows),
-                                Expanded(
-                                  child: NotificationListener(
-                                    onNotification:
-                                        (ScrollNotification scrollInfo) {
-                                      if (headerController.hasClients) {
-                                        headerController
-                                            .jumpTo(scrollInfo.metrics.pixels);
-                                      }
-                                      return true;
-                                    },
-                                    child: SingleChildScrollView(
-                                      physics: const ClampingScrollPhysics(),
-                                      controller: scrollController,
-                                      scrollDirection: Axis.horizontal,
-                                      child: groupByColumn == null
-                                          ? grid(widget.source.rows)
-                                          : stackedGrid(),
-                                    ),
+                    child: Column(
+                      children: [
+                        headers(),
+                        Expanded(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (groupByColumn == null)
+                                indexes(widget.source.rows),
+                              Expanded(
+                                child: NotificationListener(
+                                  onNotification:
+                                      (ScrollNotification scrollInfo) {
+                                    if (headerController.hasClients) {
+                                      headerController
+                                          .jumpTo(scrollInfo.metrics.pixels);
+                                    }
+                                    return true;
+                                  },
+                                  child: SingleChildScrollView(
+                                    physics: const ClampingScrollPhysics(),
+                                    controller: scrollController,
+                                    scrollDirection: Axis.horizontal,
+                                    child: groupByColumn == null
+                                        ? grid(widget.source.rows)
+                                        : stackedGrid(),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   )
                 : Scrollbar(
