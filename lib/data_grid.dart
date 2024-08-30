@@ -737,7 +737,9 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                     Expanded(
                       child: NotificationListener(
                         onNotification: (ScrollNotification scrollInfo) {
-                          if (scrollController.hasClients && headerController.position.pixels != scrollInfo.metrics.pixels) {
+                          if (scrollController.hasClients &&
+                              scrollController.position.pixels !=
+                                  scrollInfo.metrics.pixels) {
                             scrollController.jumpTo(scrollInfo.metrics.pixels);
                           }
                           return true;
@@ -805,7 +807,11 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                 children: [
                   NotificationListener(
                     onNotification: (ScrollNotification scrollInfo) {
-                      if ((bindingController ?? indexesController).hasClients && (bindingController ?? indexesController).position.pixels != scrollInfo.metrics.pixels) {
+                      if ((bindingController ?? indexesController).hasClients &&
+                          (bindingController ?? indexesController)
+                                  .position
+                                  .pixels !=
+                              scrollInfo.metrics.pixels) {
                         (bindingController ?? indexesController)
                             .jumpTo(scrollInfo.metrics.pixels);
                       }
@@ -862,8 +868,13 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                 children: [
                   NotificationListener(
                     onNotification: (ScrollNotification scrollInfo) {
-                      (bindingController ?? verticalController)
-                          .jumpTo(scrollInfo.metrics.pixels);
+                      if ((bindingController ?? verticalController)
+                              .position
+                              .pixels !=
+                          scrollInfo.metrics.pixels) {
+                        (bindingController ?? verticalController)
+                            .jumpTo(scrollInfo.metrics.pixels);
+                      }
                       return true;
                     },
                     child: Expanded(
@@ -949,8 +960,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                   return MyExpansionTile(
                     tileHeight: widget.rowHeight,
                     initialExpanded: i == 0,
-                    title: Text(widget.groupNameBuilder?.call(group) ??
-                            group.toString()
+                    title: Text(
+                        widget.groupNameBuilder?.call(group) ?? group.toString()
                         // group is ConstantsCard
                         //   ? group.nameForLocale
                         //   : group is DateTime
@@ -1011,7 +1022,9 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                                   child: NotificationListener(
                                     onNotification:
                                         (ScrollNotification scrollInfo) {
-                                      if (headerController.hasClients) {
+                                      if (headerController.hasClients &&
+                                          headerController.position.pixels !=
+                                              scrollInfo.metrics.pixels) {
                                         headerController
                                             .jumpTo(scrollInfo.metrics.pixels);
                                       }
