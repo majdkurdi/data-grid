@@ -814,7 +814,6 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                               scrollInfo.metrics.pixels) {
                         (bindingController ?? indexesController)
                             .jumpTo(scrollInfo.metrics.pixels);
-                                    print('object');
 
                       }
                       return true;
