@@ -393,7 +393,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           const Duration(milliseconds: 100), () => focusNode.requestFocus());
     }
     super.initState();
-    print('verticalController.position.pixels');
+    Future.delayed(Duration(seconds: 2), () {
+      print('verticalController.position.pixels');
     print(verticalController.position.pixels);
     print('indexesController.position.pixels');
     print(indexesController.position.pixels);
@@ -401,6 +402,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     print(headerController.position.pixels);
     print('scrollController.position.pixels');
     print(scrollController.position.pixels);
+    });
   }
 
   @override
