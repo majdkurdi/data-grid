@@ -737,9 +737,9 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                     Expanded(
                       child: NotificationListener(
                         onNotification: (ScrollNotification scrollInfo) {
-                          if (scrollController.hasClients) {
-                            scrollController.jumpTo(scrollInfo.metrics.pixels);
-                          }
+                          // if (scrollController.hasClients) {
+                          //   scrollController.jumpTo(scrollInfo.metrics.pixels);
+                          // }
                           return true;
                         },
                         child: ListView(
@@ -805,10 +805,10 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                 children: [
                   NotificationListener(
                     onNotification: (ScrollNotification scrollInfo) {
-                      if ((bindingController ?? indexesController).hasClients) {
-                        (bindingController ?? indexesController)
-                            .jumpTo(scrollInfo.metrics.pixels);
-                      }
+                      // if ((bindingController ?? indexesController).hasClients) {
+                      //   (bindingController ?? indexesController)
+                      //       .jumpTo(scrollInfo.metrics.pixels);
+                      // }
                       return true;
                     },
                     child: Expanded(
@@ -862,8 +862,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                 children: [
                   NotificationListener(
                     onNotification: (ScrollNotification scrollInfo) {
-                      (bindingController ?? verticalController)
-                          .jumpTo(scrollInfo.metrics.pixels);
+                      // (bindingController ?? verticalController)
+                      //     .jumpTo(scrollInfo.metrics.pixels);
                       return true;
                     },
                     child: Expanded(
@@ -1016,10 +1016,10 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                                   child: NotificationListener(
                                     onNotification:
                                         (ScrollNotification scrollInfo) {
-                                      if (headerController.hasClients) {
-                                        headerController
-                                            .jumpTo(scrollInfo.metrics.pixels);
-                                      }
+                                      // if (headerController.hasClients) {
+                                      //   headerController
+                                      //       .jumpTo(scrollInfo.metrics.pixels);
+                                      // }
                                       return true;
                                     },
                                     child: SingleChildScrollView(
