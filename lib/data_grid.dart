@@ -740,7 +740,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                           if (scrollController.hasClients) {
                             scrollController.jumpTo(scrollInfo.metrics.pixels);
                           }
-                          return false;
+                          return true;
                         },
                         child: ListView(
                             physics: const ClampingScrollPhysics(),
@@ -809,7 +809,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                         (bindingController ?? indexesController)
                             .jumpTo(scrollInfo.metrics.pixels);
                       }
-                      return false;
+                      return true;
                     },
                     child: Expanded(
                       child: SizedBox(
@@ -864,7 +864,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                     onNotification: (ScrollNotification scrollInfo) {
                       (bindingController ?? verticalController)
                           .jumpTo(scrollInfo.metrics.pixels);
-                      return false;
+                      return true;
                     },
                     child: Expanded(
                       child: SizedBox(
@@ -901,7 +901,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
 
             return NotificationListener(
               onNotification: (_) {
-                return false;
+                return true;
               },
               child: SizedBox(
                 width: scrollableGrid ? requiredWidth + 30 : null,
@@ -1020,7 +1020,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                                         headerController
                                             .jumpTo(scrollInfo.metrics.pixels);
                                       }
-                                      return false;
+                                      return true;
                                     },
                                     child: SingleChildScrollView(
                                       physics: const ClampingScrollPhysics(),
