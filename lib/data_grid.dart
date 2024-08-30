@@ -737,10 +737,10 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                     Expanded(
                       child: NotificationListener(
                         onNotification: (ScrollNotification scrollInfo) {
-                          // if (scrollController.hasClients) {
-                          //   scrollController.jumpTo(scrollInfo.metrics.pixels);
-                          // }
-                          return true;
+                          if (scrollController.hasClients) {
+                            scrollController.jumpTo(scrollInfo.metrics.pixels);
+                          }
+                          return false;
                         },
                         child: ListView(
                             physics: const ClampingScrollPhysics(),
@@ -805,11 +805,11 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                 children: [
                   NotificationListener(
                     onNotification: (ScrollNotification scrollInfo) {
-                      // if ((bindingController ?? indexesController).hasClients) {
-                      //   (bindingController ?? indexesController)
-                      //       .jumpTo(scrollInfo.metrics.pixels);
-                      // }
-                      return true;
+                      if ((bindingController ?? indexesController).hasClients) {
+                        (bindingController ?? indexesController)
+                            .jumpTo(scrollInfo.metrics.pixels);
+                      }
+                      return false;
                     },
                     child: Expanded(
                       child: SizedBox(
@@ -862,9 +862,9 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                 children: [
                   NotificationListener(
                     onNotification: (ScrollNotification scrollInfo) {
-                      // (bindingController ?? verticalController)
-                      //     .jumpTo(scrollInfo.metrics.pixels);
-                      return true;
+                      (bindingController ?? verticalController)
+                          .jumpTo(scrollInfo.metrics.pixels);
+                      return false;
                     },
                     child: Expanded(
                       child: SizedBox(
@@ -901,7 +901,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
 
             return NotificationListener(
               onNotification: (_) {
-                return true;
+                return false;
               },
               child: SizedBox(
                 width: scrollableGrid ? requiredWidth + 30 : null,
@@ -1016,11 +1016,11 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                                   child: NotificationListener(
                                     onNotification:
                                         (ScrollNotification scrollInfo) {
-                                      // if (headerController.hasClients) {
-                                      //   headerController
-                                      //       .jumpTo(scrollInfo.metrics.pixels);
-                                      // }
-                                      return true;
+                                      if (headerController.hasClients) {
+                                        headerController
+                                            .jumpTo(scrollInfo.metrics.pixels);
+                                      }
+                                      return false;
                                     },
                                     child: SingleChildScrollView(
                                       physics: const ClampingScrollPhysics(),
