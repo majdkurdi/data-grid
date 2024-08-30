@@ -1005,7 +1005,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                           : ScrollbarOrientation.right,
                       child: Column(
                         children: [
-                          // headers(),
+                          headers(),
                           Expanded(
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
