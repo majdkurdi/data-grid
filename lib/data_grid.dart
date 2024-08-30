@@ -103,13 +103,12 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     for (var key in cellsKeys[column.columnName] ?? <GlobalKey>[]) {
       final context = key.currentContext;
       if (context == null) return;
-        final RenderBox box = context.findRenderObject() as RenderBox;
-        double width = box.getMaxIntrinsicWidth(double.infinity);
-        width += 8;
-        if (width > w) {
-          w = width;
-        }
-      
+      final RenderBox box = context.findRenderObject() as RenderBox;
+      double width = box.getMaxIntrinsicWidth(double.infinity);
+      width += 8;
+      if (width > w) {
+        w = width;
+      }
     }
 
     widget.resizeColumn(column, w - column.width, fixWidth: w > 50 ? null : 50);
@@ -232,7 +231,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                   event.logicalKey.keyLabel.replaceAll('Numpad ', '')) ||
               event.logicalKey == LogicalKeyboardKey.delete) &&
           !editMode &&
-          !HardwareKeyboard.instance.logicalKeysPressed.any((e) => shiftKeys.contains(e)) &&
+          !HardwareKeyboard.instance.logicalKeysPressed
+              .any((e) => shiftKeys.contains(e)) &&
           widget.columns[currentCell.columnIndex].allowEditing) {
         if (event.logicalKey != LogicalKeyboardKey.delete) {
           widget.source.firstChar = event.character
@@ -581,7 +581,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               },
         onLongPress: () => widget.onLongPress?.call(row),
         onTapDown: (_) async {
-            focusNode.requestFocus();
+          focusNode.requestFocus();
           // Future.delayed(Duration(milliseconds: 1000), () {
           // print(focusNode.hasFocus);
           // });
@@ -982,15 +982,15 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               ),
             );
           }
-         
+
           return KeyboardListener(
             onKeyEvent: groupByColumn == null ? onKey : (_) {},
             // autofocus: true,
             focusNode: focusNode,
             child: scrollableGrid
                 ? Scrollbar(
-                  // trackVisibility: true,
-                  interactive: true,
+                    // trackVisibility: true,
+                    interactive: true,
                     controller: scrollController,
                     thumbVisibility: true,
                     scrollbarOrientation: ScrollbarOrientation.bottom,
@@ -1005,7 +1005,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                           : ScrollbarOrientation.right,
                       child: Column(
                         children: [
-                          headers(),
+                          // headers(),
                           Expanded(
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
