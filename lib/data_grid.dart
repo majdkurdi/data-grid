@@ -386,6 +386,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
 
   @override
   void initState() {
+    widget.source._columns = widget.columns;
     groupByColumn = widget.groupByColumn;
 
     if (widget.autoFocus || widget.autoFocusGetter?.call() == true) {
@@ -397,6 +398,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
 
   @override
   void didUpdateWidget(covariant XtraDataGrid oldWidget) {
+    widget.source._columns = widget.columns;
     groupByColumn = widget.groupByColumn;
     if (oldWidget.source != widget.source) {
       // widget.source.onCellCancelEdit(currentCell);
@@ -814,7 +816,6 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                               scrollInfo.metrics.pixels) {
                         (bindingController ?? indexesController)
                             .jumpTo(scrollInfo.metrics.pixels);
-
                       }
                       return true;
                     },
@@ -1151,6 +1152,8 @@ class MyGridColumn {
 
 // ignore: must_be_immutable
 class MyDataGridSource extends Equatable {
+  List<MyGridColumn>? _columns;
+  List<MyGridColumn> get columns => _columns ?? [];
   final _id = Random().nextInt(9999);
 
   List<DataGridRow> rows = <DataGridRow>[];
