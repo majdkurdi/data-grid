@@ -658,7 +658,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                 ),
               ),
             ),
-            if (column.searchableColumn)
+            if (column.searchableColumn && currentCell == index)
                         InkWell(
                           onTap: () async {
                             await widget.source.onCellSubmit(
@@ -1171,7 +1171,7 @@ class MyGridColumn {
     this.width = 100,
     this.contextMenuItems,
     this.allowEditing = true,
-    this.searchableColumn = true,
+    this.searchableColumn = false,
   });
 }
 
