@@ -608,6 +608,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               editMode = widget.source.onCellBeginEdit(row, index, column);
             }
           }
+          print(currentCell.rowIndex);
           setState(() {});
         },
         child: ContextMenuEdited(
