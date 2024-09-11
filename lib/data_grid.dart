@@ -558,100 +558,122 @@ class _XtraDataGridState extends State<XtraDataGrid> {
 
   Widget _gridCell(RowColumnIndex index, DataGridRow row, MyGridColumn column,
           DataGridCell cell, GlobalKey key) =>
-      GestureDetector(
-        onDoubleTap: widget.onDoubleTap != null
-            ? () => widget.onDoubleTap!(row)
-            : () {
-                final oldCell = currentCell;
-                currentCell = index;
-
-                if (widget.onSelected != null) {
-                  widget.onSelected!(row, index);
-                }
-                if (groupByColumn == null) {
-                  if (editMode &&
-                      currentCell.toString() != oldCell.toString()) {
-                    widget.source.onCellSubmit(row, oldCell, column);
-                    editMode = false;
-                  } else if (!editMode &&
-                      widget.columns[currentCell.columnIndex].allowEditing) {
-                    editMode =
-                        widget.source.onCellBeginEdit(row, index, column);
+      AnimatedContainer(
+        duration: Duration.zero,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            width:
+                                currentCell.toString() == index.toString() ? 1.3 : 0.3,
+                            color: currentCell.toString() == index.toString() &&
+                                    widget.manualFocus != false
+                                ? Get.theme.colorScheme.primary.withOpacity(0.2)
+                                : Colors.grey),
+                        color: currentCell.toString() == index.toString() &&
+                                widget.manualFocus != false
+                            ? Get.theme.colorScheme.primary.withOpacity(0.4)
+                            : index.rowIndex.isEven
+                                ? Colors.white
+                                : Colors.grey.shade400),
+                    height: widget.rowHeight,
+                    width: column.width,
+        
+        child: Row(
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onDoubleTap: widget.onDoubleTap != null
+                    ? () => widget.onDoubleTap!(row)
+                    : () {
+                        final oldCell = currentCell;
+                        currentCell = index;
+              
+                        if (widget.onSelected != null) {
+                          widget.onSelected!(row, index);
+                        }
+                        if (groupByColumn == null) {
+                          if (editMode &&
+                              currentCell.toString() != oldCell.toString()) {
+                            widget.source.onCellSubmit(row, oldCell, column);
+                            editMode = false;
+                          } else if (!editMode &&
+                              widget.columns[currentCell.columnIndex].allowEditing) {
+                            editMode =
+                                widget.source.onCellBeginEdit(row, index, column);
+                          }
+                        }
+                        setState(() {});
+                      },
+                onLongPress: () => widget.onLongPress?.call(row),
+                onTapDown: (_) async {
+                  focusNode.requestFocus();
+                  // Future.delayed(Duration(milliseconds: 1000), () {
+                  // print(focusNode.hasFocus);
+                  // });
+                  final oldCell = currentCell;
+              
+                  currentCell = index;
+              
+                  if (widget.onSelected != null) {
+                    widget.onSelected!(row, index);
                   }
-                }
-                setState(() {});
-              },
-        onLongPress: () => widget.onLongPress?.call(row),
-        onTapDown: (_) async {
-          focusNode.requestFocus();
-          // Future.delayed(Duration(milliseconds: 1000), () {
-          // print(focusNode.hasFocus);
-          // });
-          final oldCell = currentCell;
-
-          currentCell = index;
-
-          if (widget.onSelected != null) {
-            widget.onSelected!(row, index);
-          }
-          if (groupByColumn == null) {
-            if (editMode && currentCell.toString() != oldCell.toString()) {
-              // print('sdbds')
-              await widget.source.onCellSubmit(
-                  widget.source.rows[oldCell.rowIndex],
-                  oldCell,
-                  widget.columns[oldCell.columnIndex]);
-              editMode = false;
-            } else if (!editMode &&
-                widget.columns[currentCell.columnIndex].allowEditing &&
-                oldCell.toString() == currentCell.toString()) {
-              editMode = widget.source.onCellBeginEdit(row, index, column);
-            }
-          }
-          setState(() {});
-        },
-        child: ContextMenuEdited(
-          width: 150,
-          builder: widget.contextMenu == null
-              ? null
-              : (context) => [
-                    ...widget.contextMenu!.call(context, row, cell),
-                    ...widget.source
-                        .buildContextMenu(context, cell, column, index, row),
-                    if (widget.source.rows.length > 1 && column.allowEditing)
-                      ContextMenuTile(
-                          title: 'deleteRow'.tr,
-                          onTap: () {
-                            setState(() {
-                              Navigator.of(context).pop();
-                              widget.source.deleteRow(row);
-                            });
-                          }),
-                  ],
-          child: AnimatedContainer(
-            duration: Duration.zero,
-            decoration: BoxDecoration(
-                border: Border.all(
-                    width:
-                        currentCell.toString() == index.toString() ? 1.3 : 0.3,
-                    color: currentCell.toString() == index.toString() &&
-                            widget.manualFocus != false
-                        ? Get.theme.colorScheme.primary.withOpacity(0.2)
-                        : Colors.grey),
-                color: currentCell.toString() == index.toString() &&
-                        widget.manualFocus != false
-                    ? Get.theme.colorScheme.primary.withOpacity(0.4)
-                    : index.rowIndex.isEven
-                        ? Colors.white
-                        : Colors.grey.shade400),
-            height: widget.rowHeight,
-            width: column.width,
-            child: editMode && index.toString() == currentCell.toString()
-                ? widget.source
-                    .editBuild(cell, column.columnName, index, row, endEdit)
-                : widget.source
-                    .build(cell, column, index, row, currentCell, key),
-          ),
+                  if (groupByColumn == null) {
+                    if (editMode && currentCell.toString() != oldCell.toString()) {
+                      // print('sdbds')
+                      await widget.source.onCellSubmit(
+                          widget.source.rows[oldCell.rowIndex],
+                          oldCell,
+                          widget.columns[oldCell.columnIndex]);
+                      editMode = false;
+                    } else if (!editMode &&
+                        widget.columns[currentCell.columnIndex].allowEditing &&
+                        oldCell.toString() == currentCell.toString()) {
+                      editMode = widget.source.onCellBeginEdit(row, index, column);
+                    }
+                  }
+                  setState(() {});
+                },
+                child: ContextMenuEdited(
+                  width: 150,
+                  builder: widget.contextMenu == null
+                      ? null
+                      : (context) => [
+                            ...widget.contextMenu!.call(context, row, cell),
+                            ...widget.source
+                                .buildContextMenu(context, cell, column, index, row),
+                            if (widget.source.rows.length > 1 && column.allowEditing)
+                              ContextMenuTile(
+                                  title: 'deleteRow'.tr,
+                                  onTap: () {
+                                    setState(() {
+                                      Navigator.of(context).pop();
+                                      widget.source.deleteRow(row);
+                                    });
+                                  }),
+                          ],
+                  child: editMode && index.toString() == currentCell.toString()
+                      ? widget.source.editBuild(
+                          cell, column.columnName, index, row, endEdit)
+                      : widget.source
+                          .build(cell, column, index, row, currentCell, key),
+                ),
+              ),
+            ),
+            if (column.searchableColumn)
+                        InkWell(
+                          onTap: () async {
+                            await widget.source.onCellSubmit(
+                                widget.source.rows[currentCell.rowIndex],
+                                currentCell,
+                                widget.columns[currentCell.columnIndex]);
+                            setState(() {});
+                          },
+                          child: Icon(
+                            Icons.search,
+                            color: Get.theme.colorScheme.inversePrimary,
+                            size: 14,
+                          ),
+                        ),
+          ],
         ),
       );
 
@@ -1140,14 +1162,17 @@ class MyGridColumn {
   final String columnName;
   double width;
   final bool allowEditing;
+  final bool searchableColumn;
   final List<Widget> Function(BuildContext)? contextMenuItems;
 
-  MyGridColumn(
-      {required this.label,
-      required this.columnName,
-      this.width = 100,
-      this.contextMenuItems,
-      this.allowEditing = true});
+  MyGridColumn({
+    required this.label,
+    required this.columnName,
+    this.width = 100,
+    this.contextMenuItems,
+    this.allowEditing = true,
+    this.searchableColumn = true,
+  });
 }
 
 // ignore: must_be_immutable
