@@ -647,13 +647,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             height: widget.rowHeight,
             width: column.width,
             child: editMode && index.toString() == currentCell.toString()
-                ? Row(
-                    children: [
-                      widget.source.editBuild(
-                          cell, column.columnName, index, row, endEdit),
-                      
-                    ],
-                  )
+                ? widget.source.editBuild(
+                    cell, column.columnName, index, row, endEdit)
                 : widget.source
                     .build(cell, column, index, row, currentCell, key),
           ),
