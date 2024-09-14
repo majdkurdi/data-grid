@@ -839,8 +839,12 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                                   final cell = rows[i]
                                       .getCells()
                                       // [widget.columns.indexOf(column)];
-                                      .firstWhere((c) =>
+                                      .firstWhereOrNull((c) =>
                                           c.columnName == column.columnName);
+                                          if(cell == null) {
+                                            print(column.columnName);
+                                          }
+                                          cell!;
                                   final index = RowColumnIndex(
                                       i, widget.columns.indexOf(column));
                                   final k = GlobalKey();
