@@ -55,7 +55,7 @@ class XtraDataGrid extends StatefulWidget {
       contextMenu;
   final Map<LogicalKeyboardKey, void Function(dynamic currenctCellValue)>?
       shortcuts;
-  final void Function(dynamic currenctCellValue)? onRebuild;
+  final void Function(dynamic currenctCellValue, dynamic currentRowValue)? onRebuild;
   final String Function(dynamic)? groupNameBuilder;
 
   void reorderColumns(int lastI, int newI) {
@@ -691,13 +691,16 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               e.columnName ==
               widget.columns[currentCell.columnIndex].columnName)
           ?.value;
+  dynamic get currentRowValue => widget.source.rows.isEmpty
+      ? null
+      : widget.source.rows[currentCell.rowIndex].getValue();
 
   @override
   Widget build(BuildContext context) {
     cellsKeys = Map.fromEntries(
         widget.columns.map((e) => MapEntry(e.columnName, <GlobalKey>[])));
     if (widget.setSelectedCell != null) widget.setSelectedCell!(currentCell);
-    widget.onRebuild?.call(currentCellValue);
+    widget.onRebuild?.call(currentCellValue, currentRowValue);
     // final quickInfo = context.read<QuickInfoBloc>().state;
     // if (quickInfo.showQuickInfoWidget &&
     //     currentCellValue is ConstantsCard &&
