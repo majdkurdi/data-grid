@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:data_grid/clipboard_api.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +56,8 @@ class XtraDataGrid extends StatefulWidget {
       contextMenu;
   final Map<LogicalKeyboardKey, void Function(dynamic currenctCellValue)>?
       shortcuts;
-  final void Function(dynamic currenctCellValue, dynamic currentRowValue)? onRebuild;
+  final void Function(dynamic currenctCellValue, dynamic currentRowValue)?
+      onRebuild;
   final String Function(dynamic)? groupNameBuilder;
 
   void reorderColumns(int lastI, int newI) {
@@ -384,6 +386,31 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     setState(() {});
   }
 
+  void pasteFromClipboard(RowColumnIndex cellIndex) async {
+    final clipboardContent = await dataFromClipboard();
+    if (clipboardContent == null) return;
+    if (clipboardContent is String) {
+      widget.source.firstChar = clipboardContent;
+      editMode = widget.source.onCellBeginEdit(
+          widget.source.rows[cellIndex.rowIndex],
+          cellIndex,
+          widget.columns[cellIndex.columnIndex]);
+    } else if (clipboardContent is List<List<String>> &&
+        widget.source.rowFromClipboard != null) {
+      widget.source.rows.removeRange(
+          cellIndex.rowIndex, cellIndex.rowIndex + clipboardContent.length);
+      for (var i in clipboardContent.reversed) {
+        widget.source.rows
+            .insert(cellIndex.rowIndex, widget.source.rowFromClipboard!(i));
+      }
+      setState(() {});
+    }
+  }
+
+  void copyCellContent(DataGridCell cell) async {
+    copyToClipboard(cell.value.toString());
+  }
+
   @override
   void initState() {
     widget.source._columns = widget.columns;
@@ -618,6 +645,22 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                     ...widget.contextMenu!.call(context, row, cell),
                     ...widget.source
                         .buildContextMenu(context, cell, column, index, row),
+                    ContextMenuTile(
+                        title: 'copy'.tr,
+                        onTap: () {
+                          setState(() {
+                            Navigator.of(context).pop();
+                            copyCellContent(cell);
+                          });
+                        }),
+                    ContextMenuTile(
+                        title: 'paste'.tr,
+                        onTap: () {
+                          setState(() {
+                            Navigator.of(context).pop();
+                            pasteFromClipboard(index);
+                          });
+                        }),
                     if (widget.source.rows.length > 1 && column.allowEditing)
                       ContextMenuTile(
                           title: 'deleteRow'.tr,
@@ -647,8 +690,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             height: widget.rowHeight,
             width: column.width,
             child: editMode && index.toString() == currentCell.toString()
-                ? widget.source.editBuild(
-                    cell, column.columnName, index, row, endEdit)
+                ? widget.source
+                    .editBuild(cell, column.columnName, index, row, endEdit)
                 : widget.source
                     .build(cell, column, index, row, currentCell, key),
           ),
@@ -844,10 +887,10 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                                       // [widget.columns.indexOf(column)];
                                       .firstWhereOrNull((c) =>
                                           c.columnName == column.columnName);
-                                          if(cell == null) {
-                                            print(column.columnName);
-                                          }
-                                          cell!;
+                                  if (cell == null) {
+                                    print(column.columnName);
+                                  }
+                                  cell!;
                                   final index = RowColumnIndex(
                                       i, widget.columns.indexOf(column));
                                   final k = GlobalKey();
@@ -1169,6 +1212,8 @@ class MyDataGridSource extends Equatable {
   List<DataGridRow> rows = <DataGridRow>[];
 
   void deleteRow(DataGridRow row) {}
+
+  DataGridRow Function(List<String>)? rowFromClipboard;
 
   String firstChar = '';
   final focus = FocusNode();
