@@ -398,7 +398,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     } else if (clipboardContent is List<List<String>> &&
         widget.source.rowFromClipboard != null) {
           final rowsToDelete = widget.source.rows.getRange(
-          cellIndex.rowIndex, cellIndex.rowIndex + clipboardContent.length);
+          cellIndex.rowIndex, cellIndex.rowIndex + clipboardContent.length).toList();
       for (var i in rowsToDelete) {
         widget.source.deleteRow(i);
       }
