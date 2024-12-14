@@ -399,12 +399,13 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         widget.source.rowFromClipboard != null) {
       for(var i in widget.source.rows.getRange(
           cellIndex.rowIndex, cellIndex.rowIndex + clipboardContent.length)){
+            print(i.cells.map((e) => e.value).toList());
             widget.source.deleteRow(i);
           }
-      // for (var i in clipboardContent.reversed) {
-      //   widget.source
-      //       .insertRow(cellIndex.rowIndex -1, widget.source.rowFromClipboard!(i));
-      // }
+      for (var i in clipboardContent.reversed) {
+        widget.source
+            .insertRow(cellIndex.rowIndex -1, widget.source.rowFromClipboard!(i));
+      }
       setState(() {});
     }
   }
