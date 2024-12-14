@@ -21,6 +21,8 @@ Future<List<List<String>>> parseExcelClipboard() async {
 
 Future<dynamic> dataFromClipboard() async {
   final text = await readFromClipboard();
+  print('paste');
+  print(text);
   if(text == null) return null;
   if(text.contains('\n') || text.contains('\t')) return parseExcelClipboard();
   return text;
