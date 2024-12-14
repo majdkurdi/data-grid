@@ -5,10 +5,10 @@ import 'package:universal_html/html.dart' as html;
 Future<String?> readFromClipboard() async {
   try {
     if (kIsWeb) {
-  return await html.window.navigator.clipboard?.readText();
-} else {
-  return (await Clipboard.getData('text/plain'))?.text;
-}
+      return await html.window.navigator.clipboard?.readText();
+    } else {
+      return (await Clipboard.getData('text/plain'))?.text;
+    }
   } catch (e) {
     print('Failed to read clipboard: $e');
     return null;
@@ -20,8 +20,11 @@ Future<List<List<String>>> parseExcelClipboard() async {
   if (clipboardText == null || clipboardText.isEmpty) {
     return [];
   }
-  final rows = clipboardText.split('\n');
-  final List<List<String>> parsedData = rows.map((row) => row.split('\t')).toList();
+  final rows =
+      clipboardText.split('\n').map((e) => e.replaceAll('\n', '')).toList();
+  final List<List<String>> parsedData = rows
+      .map((row) => row.split('\t').map((e) => e.replaceAll('\t', '')).toList())
+      .toList();
   return parsedData;
 }
 
@@ -29,8 +32,8 @@ Future<dynamic> dataFromClipboard() async {
   final text = await readFromClipboard();
   print('paste');
   print(text);
-  if(text == null) return null;
-  if(text.contains('\n') || text.contains('\t')) return parseExcelClipboard();
+  if (text == null) return null;
+  if (text.contains('\n') || text.contains('\t')) return parseExcelClipboard();
   return text;
 }
 
