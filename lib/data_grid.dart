@@ -403,7 +403,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           }
       for (var i in clipboardContent.reversed) {
         widget.source
-            .insertRow(cellIndex.rowIndex, widget.source.rowFromClipboard!(i));
+            .insertRow(cellIndex.rowIndex -1, widget.source.rowFromClipboard!(i));
       }
       setState(() {});
     }
