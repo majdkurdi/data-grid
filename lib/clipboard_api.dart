@@ -1,8 +1,14 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:universal_html/html.dart' as html;
 
 Future<String?> readFromClipboard() async {
   try {
-    return await html.window.navigator.clipboard?.readText();
+    if (kIsWeb) {
+  return await html.window.navigator.clipboard?.readText();
+} else {
+  return (await Clipboard.getData('text/plain'))?.text;
+}
   } catch (e) {
     print('Failed to read clipboard: $e');
     return null;
