@@ -397,16 +397,14 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           widget.columns[cellIndex.columnIndex]);
     } else if (clipboardContent is List<List<String>> &&
         widget.source.rowFromClipboard != null) {
-          print(widget.source.rows.getRange(
-          cellIndex.rowIndex, cellIndex.rowIndex + clipboardContent.length).length);
       for(var i in widget.source.rows.getRange(
           cellIndex.rowIndex, cellIndex.rowIndex + clipboardContent.length)){
             widget.source.deleteRow(i);
           }
-      for (var i in clipboardContent.reversed) {
-        widget.source
-            .insertRow(cellIndex.rowIndex -1, widget.source.rowFromClipboard!(i));
-      }
+      // for (var i in clipboardContent.reversed) {
+      //   widget.source
+      //       .insertRow(cellIndex.rowIndex -1, widget.source.rowFromClipboard!(i));
+      // }
       setState(() {});
     }
   }
