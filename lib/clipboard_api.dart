@@ -21,7 +21,7 @@ Future<List<List<String>>> parseExcelClipboard() async {
     return [];
   }
   final rows =
-      clipboardText.split('\n').map((e) => e.replaceAll('\n', '')).toList();
+      clipboardText.split('\n').map((e) => e.replaceAll('\u{1F972}', '')).toList();
   final List<List<String>> parsedData = rows
       .map((row) => row.split('\t').map((e) => e.replaceAll('\t', '')).toList())
       .toList();
