@@ -399,7 +399,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         widget.source.rowFromClipboard != null) {
           print(cellIndex.rowIndex);
       for(var i in widget.source.rows.getRange(
-          cellIndex.rowIndex, cellIndex.rowIndex + clipboardContent.length)){
+          cellIndex.rowIndex, cellIndex.rowIndex + clipboardContent.length +1)){
             widget.source.deleteRow(i);
           }
       for (var i in clipboardContent.reversed) {
