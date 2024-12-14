@@ -397,16 +397,14 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           widget.columns[cellIndex.columnIndex]);
     } else if (clipboardContent is List<List<String>> &&
         widget.source.rowFromClipboard != null) {
-          print(cellIndex.rowIndex);
-          print(cellIndex.rowIndex+ clipboardContent.length);
-      for(var i in widget.source.rows.getRange(
-          cellIndex.rowIndex, cellIndex.rowIndex + clipboardContent.length)){
-            
-            widget.source.deleteRow(i);
-          }
+      widget.source.deleteRows(widget.source.rows
+          .getRange(
+              cellIndex.rowIndex, cellIndex.rowIndex + clipboardContent.length)
+          .toList());
+
       for (var i in clipboardContent.reversed) {
-        widget.source
-            .insertRow(cellIndex.rowIndex -1, widget.source.rowFromClipboard!(i));
+        widget.source.insertRow(
+            cellIndex.rowIndex - 1, widget.source.rowFromClipboard!(i));
       }
       setState(() {});
     }
@@ -1217,6 +1215,7 @@ class MyDataGridSource extends Equatable {
   List<DataGridRow> rows = <DataGridRow>[];
 
   void deleteRow(DataGridRow row) {}
+  void deleteRows(List<DataGridRow> rows) {}
   void insertRow(int index, DataGridRow row) {}
 
   DataGridRow Function(List<String>)? rowFromClipboard;
