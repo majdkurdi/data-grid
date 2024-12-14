@@ -129,7 +129,11 @@ class _XtraDataGridState extends State<XtraDataGrid> {
       LogicalKeyboardKey.shiftLeft,
       LogicalKeyboardKey.shiftRight
     ];
-
+    final controlKeys = [
+      LogicalKeyboardKey.controlLeft,
+      LogicalKeyboardKey.controlRight
+    ];
+    final keysPressed = HardwareKeyboard.instance.logicalKeysPressed;
     if (event is KeyDownEvent) {
       final oldCell = currentCell;
       final oldEditMode = editMode;
@@ -215,7 +219,6 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             currentCell,
             widget.columns[currentCell.columnIndex]);
       } else if (event.logicalKey == LogicalKeyboardKey.tab) {
-        final keysPressed = HardwareKeyboard.instance.logicalKeysPressed;
         final shiftPressed =
             keysPressed.contains(LogicalKeyboardKey.shiftLeft) ||
                 keysPressed.contains(LogicalKeyboardKey.shiftRight);
@@ -223,6 +226,15 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           endEdit(shiftPressed ? _previousCell() : null);
         } else {
           currentCell = shiftPressed ? _previousCell() : _nextCell();
+        }
+      } else if ([LogicalKeyboardKey.keyV, LogicalKeyboardKey.keyC]
+              .contains(event.logicalKey) &&
+          controlKeys.any((k) => keysPressed.contains(k))) {
+        if (event.logicalKey == LogicalKeyboardKey.keyV) {
+          pasteFromClipboard(currentCell);
+        } else {
+          copyCellContent(widget.source.rows[currentCell.rowIndex]
+              .cells[currentCell.columnIndex]);
         }
       } else if ((englishLetters
                   .contains(event.logicalKey.keyLabel.toLowerCase()) ||
@@ -397,8 +409,10 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           widget.columns[cellIndex.columnIndex]);
     } else if (clipboardContent is List<List<String>> &&
         widget.source.rowFromClipboard != null) {
-          final rowsToDelete = widget.source.rows.getRange(
-          cellIndex.rowIndex, cellIndex.rowIndex + clipboardContent.length).toList();
+      final rowsToDelete = widget.source.rows
+          .getRange(
+              cellIndex.rowIndex, cellIndex.rowIndex + clipboardContent.length)
+          .toList();
       for (var i in rowsToDelete) {
         widget.source.deleteRow(i);
       }
