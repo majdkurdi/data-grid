@@ -38,5 +38,9 @@ Future<dynamic> dataFromClipboard() async {
 }
 
 void copyToClipboard(String text) {
+  if (kIsWeb) {
   html.window.navigator.clipboard?.writeText(text);
+} else {
+  Clipboard.setData(ClipboardData(text: text));
+}
 }
