@@ -1229,7 +1229,6 @@ class MyDataGridSource extends Equatable {
   List<DataGridRow> rows = <DataGridRow>[];
 
   void deleteRow(DataGridRow row) {}
-  void deleteRows(List<DataGridRow> rows) {}
   void insertRow(int index, DataGridRow row) {}
 
   DataGridRow Function(List<String>)? rowFromClipboard;
