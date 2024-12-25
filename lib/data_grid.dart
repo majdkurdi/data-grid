@@ -679,7 +679,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                           });
                         }),
                     if (widget.source.rows.length > 1 &&
-                        ((column.allowEditing ||
+                        ((column.allowEditing &&
                                 widget.source.allowDeleteRow(row) == null) ||
                             widget.source.allowDeleteRow(row) == true))
                       ContextMenuTile(
