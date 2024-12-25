@@ -678,7 +678,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                             pasteFromClipboard(index);
                           });
                         }),
-                    if (widget.source.rows.length > 1 && column.allowEditing)
+                    if (widget.source.rows.length > 1 && widget.source.allowDeleteRow(row))
                       ContextMenuTile(
                           title: 'deleteRow'.tr,
                           onTap: () {
@@ -1229,6 +1229,7 @@ class MyDataGridSource extends Equatable {
   List<DataGridRow> rows = <DataGridRow>[];
 
   void deleteRow(DataGridRow row) {}
+  bool allowDeleteRow(DataGridRow row) => true;
   void insertRow(int index, DataGridRow row) {}
 
   DataGridRow Function(List<String>)? rowFromClipboard;
