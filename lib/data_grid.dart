@@ -417,8 +417,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         widget.source.deleteRow(i);
       }
       for (var i in clipboardContent.reversed) {
-        widget.source.insertRow(
-            cellIndex.rowIndex, widget.source.rowFromClipboard!(i));
+        widget.source
+            .insertRow(cellIndex.rowIndex, widget.source.rowFromClipboard!(i));
       }
       setState(() {});
     }
@@ -678,7 +678,10 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                             pasteFromClipboard(index);
                           });
                         }),
-                    if (widget.source.rows.length > 1 && widget.source.allowDeleteRow(row))
+                    if (widget.source.rows.length > 1 &&
+                        ((column.allowEditing ||
+                                widget.source.allowDeleteRow(row) == null) ||
+                            widget.source.allowDeleteRow(row) == true))
                       ContextMenuTile(
                           title: 'deleteRow'.tr,
                           onTap: () {
@@ -1229,7 +1232,7 @@ class MyDataGridSource extends Equatable {
   List<DataGridRow> rows = <DataGridRow>[];
 
   void deleteRow(DataGridRow row) {}
-  bool allowDeleteRow(DataGridRow row) => true;
+  bool? allowDeleteRow(DataGridRow row) => null;
   void insertRow(int index, DataGridRow row) {}
 
   DataGridRow Function(List<String>)? rowFromClipboard;
