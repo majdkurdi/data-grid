@@ -678,6 +678,17 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                             pasteFromClipboard(index);
                           });
                         }),
+                    if ((column.allowEditing &&
+                            widget.source.allowInsertingRow(index.rowIndex) == null) ||
+                        widget.source.allowInsertingRow(index.rowIndex) == true)
+                      ContextMenuTile(
+                          title: 'insertRow'.tr,
+                          onTap: () {
+                            setState(() {
+                              Navigator.of(context).pop();
+                              widget.source.insertRow(index.rowIndex +1, DataGridRow(cells: []));
+                            });
+                          }),
                     if (widget.source.rows.length > 1 &&
                         ((column.allowEditing &&
                                 widget.source.allowDeleteRow(row) == null) ||
@@ -1233,6 +1244,7 @@ class MyDataGridSource extends Equatable {
 
   void deleteRow(DataGridRow row) {}
   bool? allowDeleteRow(DataGridRow row) => null;
+  bool? allowInsertingRow(int rowIndex) => null;
   void insertRow(int index, DataGridRow row) {}
 
   DataGridRow Function(List<String>)? rowFromClipboard;
