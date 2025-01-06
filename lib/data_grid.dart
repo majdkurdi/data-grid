@@ -633,6 +633,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           // });
           final oldCell = currentCell;
 
+          currentCell = index;
+
           if (widget.onSelected != null) {
             widget.onSelected!(row, index);
           }
@@ -668,7 +670,6 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                             copyCellContent(cell);
                           });
                         }),
-                        if(column.allowEditing)
                     ContextMenuTile(
                         title: 'paste'.tr,
                         onTap: () {
