@@ -444,7 +444,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   void didUpdateWidget(covariant XtraDataGrid oldWidget) {
     widget.source._columns = widget.columns;
     groupByColumn = widget.groupByColumn;
-    if (oldWidget.source != widget.source) {
+    if (oldWidget.source != widget.source || currentCell.rowIndex >= widget.source.rows.length || currentCell.columnIndex >= widget.columns.length) {
       // widget.source.onCellCancelEdit(currentCell);
       editMode = false;
       currentCell = RowColumnIndex(0, 0);
