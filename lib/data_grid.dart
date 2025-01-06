@@ -447,7 +447,6 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     if (oldWidget.source != widget.source) {
       // widget.source.onCellCancelEdit(currentCell);
       editMode = false;
-      print('currentCell = RowColumnIndex(0, 0)');
       currentCell = RowColumnIndex(0, 0);
       Future.delayed(const Duration(milliseconds: 500), () {
         if (scrollController.hasClients) scrollController.jumpTo(0);
@@ -774,7 +773,6 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     cellsKeys = Map.fromEntries(
         widget.columns.map((e) => MapEntry(e.columnName, <GlobalKey>[])));
     if (widget.setSelectedCell != null) widget.setSelectedCell!(currentCell);
-    print ('widget.setSelectedCell != null) widget.setSelectedCell!($currentCell');
     widget.onRebuild?.call(currentCellValue, currentRowValue);
     // final quickInfo = context.read<QuickInfoBloc>().state;
     // if (quickInfo.showQuickInfoWidget &&
