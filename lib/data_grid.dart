@@ -447,6 +447,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     if (oldWidget.source != widget.source) {
       // widget.source.onCellCancelEdit(currentCell);
       editMode = false;
+      print('currentCell = RowColumnIndex(0, 0)');
       currentCell = RowColumnIndex(0, 0);
       Future.delayed(const Duration(milliseconds: 500), () {
         if (scrollController.hasClients) scrollController.jumpTo(0);
@@ -632,10 +633,6 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           // print(focusNode.hasFocus);
           // });
           final oldCell = currentCell;
-
-          currentCell = index;
-          print('index');
-          print(index);
 
           if (widget.onSelected != null) {
             widget.onSelected!(row, index);
