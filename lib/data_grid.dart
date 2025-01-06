@@ -1238,7 +1238,7 @@ class MyGridColumn {
 class MyDataGridSource extends Equatable {
   List<MyGridColumn>? _columns;
   List<MyGridColumn> get columns => _columns ?? [];
-  final _id = Random().nextInt(9999);
+  final id = Random().nextInt(9999);
 
   List<DataGridRow> rows = <DataGridRow>[];
 
@@ -1280,7 +1280,7 @@ class MyDataGridSource extends Equatable {
   }
 
   @override
-  List<Object?> get props => [_id];
+  List<Object?> get props => [id];
 }
 
 class DataGridCell<T> {
