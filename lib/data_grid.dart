@@ -636,7 +636,6 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           currentCell = index;
 
           if (widget.onSelected != null) {
-            print('object');
             widget.onSelected!(row, index);
           }
           if (groupByColumn == null) {
@@ -776,6 +775,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     cellsKeys = Map.fromEntries(
         widget.columns.map((e) => MapEntry(e.columnName, <GlobalKey>[])));
     if (widget.setSelectedCell != null) widget.setSelectedCell!(currentCell);
+    print ('widget.setSelectedCell != null) widget.setSelectedCell!($currentCell');
     widget.onRebuild?.call(currentCellValue, currentRowValue);
     // final quickInfo = context.read<QuickInfoBloc>().state;
     // if (quickInfo.showQuickInfoWidget &&
