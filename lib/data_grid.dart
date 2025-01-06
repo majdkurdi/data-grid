@@ -1238,7 +1238,9 @@ class MyGridColumn {
 class MyDataGridSource extends Equatable {
   List<MyGridColumn>? _columns;
   List<MyGridColumn> get columns => _columns ?? [];
-  final id = Random().nextInt(9999);
+  final int id;
+
+  MyDataGridSource({int? iid}) : id = iid ?? Random().nextInt(9999);
 
   List<DataGridRow> rows = <DataGridRow>[];
 
