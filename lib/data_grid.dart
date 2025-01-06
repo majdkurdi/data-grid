@@ -636,6 +636,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           currentCell = index;
 
           if (widget.onSelected != null) {
+            print('object');
             widget.onSelected!(row, index);
           }
           if (groupByColumn == null) {
@@ -670,6 +671,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                             copyCellContent(cell);
                           });
                         }),
+                        if(column.allowEditing)
                     ContextMenuTile(
                         title: 'paste'.tr,
                         onTap: () {
