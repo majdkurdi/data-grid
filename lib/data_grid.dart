@@ -634,6 +634,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           final oldCell = currentCell;
 
           currentCell = index;
+          print('index');
+          print(index);
 
           if (widget.onSelected != null) {
             widget.onSelected!(row, index);
