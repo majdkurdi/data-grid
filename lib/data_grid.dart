@@ -350,10 +350,13 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           currentCell.toString() != oldCell.toString() ||
           !editMode) {
         Future.delayed(Duration.zero, () {
-          if (mounted) setState(() {});
+          if (mounted) {
+            setState(() {});
+            focusNode.requestFocus();
+          }
         });
       }
-      Future.delayed(Duration(milliseconds: 10), () => focusNode.requestFocus());
+      // Future.delayed(Duration(milliseconds: 10), () => focusNode.requestFocus());
     }
   }
 
@@ -445,7 +448,9 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   void didUpdateWidget(covariant XtraDataGrid oldWidget) {
     widget.source._columns = widget.columns;
     groupByColumn = widget.groupByColumn;
-    if (oldWidget.source != widget.source || currentCell.rowIndex >= widget.source.rows.length || currentCell.columnIndex >= widget.columns.length) {
+    if (oldWidget.source != widget.source ||
+        currentCell.rowIndex >= widget.source.rows.length ||
+        currentCell.columnIndex >= widget.columns.length) {
       // widget.source.onCellCancelEdit(currentCell);
       editMode = false;
       currentCell = RowColumnIndex(0, 0);
@@ -680,14 +685,16 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                           });
                         }),
                     if ((column.allowEditing &&
-                            widget.source.allowInsertingRow(index.rowIndex) == null) ||
+                            widget.source.allowInsertingRow(index.rowIndex) ==
+                                null) ||
                         widget.source.allowInsertingRow(index.rowIndex) == true)
                       ContextMenuTile(
                           title: 'insertRow'.tr,
                           onTap: () {
                             setState(() {
                               Navigator.of(context).pop();
-                              widget.source.insertRow(index.rowIndex +1, DataGridRow(cells: []));
+                              widget.source.insertRow(
+                                  index.rowIndex + 1, DataGridRow(cells: []));
                             });
                           }),
                     if (widget.source.rows.length > 1 &&
