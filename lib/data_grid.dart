@@ -353,7 +353,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           if (mounted) setState(() {});
         });
       }
-      Future.delayed(Duration(milliseconds: 10));
+      Future.delayed(Duration(milliseconds: 10), () => focusNode.requestFocus());
     }
   }
 
