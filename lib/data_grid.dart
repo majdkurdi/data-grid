@@ -400,6 +400,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     // currentCell = _nextCell();
     // }
     setState(() {});
+    focusNode.requestFocus();
   }
 
   void pasteFromClipboard(RowColumnIndex cellIndex) async {
