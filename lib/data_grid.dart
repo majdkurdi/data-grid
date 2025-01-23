@@ -421,23 +421,16 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                   ? widget.source.rows.length
                   : cellIndex.rowIndex + clipboardContent.length)
           .toList();
-      print('beforeDelete ${DateTime.now()}');
 
       for (var i in rowsToDelete) {
         widget.source.deleteRow(i);
-        print('Delete ${rowsToDelete.indexOf(i)} ${DateTime.now()}');
       }
-      print('AfterDelete ${DateTime.now()}');
-      print('Coverting ${DateTime.now()}');
       final listToAdd = clipboardContent.reversed
           .map((i) => widget.source.rowFromClipboard!(i))
           .toList();
-      print('AfterCoverting ${DateTime.now()}');
-      print('Before Adding ${DateTime.now()}');
       for (var i in listToAdd) {
         widget.source.insertRow(cellIndex.rowIndex, i);
       }
-      print('After adding ${DateTime.now()}');
       setState(() {});
     }
   }
