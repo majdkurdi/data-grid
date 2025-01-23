@@ -421,20 +421,23 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                   ? widget.source.rows.length
                   : cellIndex.rowIndex + clipboardContent.length)
           .toList();
-          print('beforeDelete ${DateTime.now()}');
+      print('beforeDelete ${DateTime.now()}');
+
       for (var i in rowsToDelete) {
-          print('Delete ${rowsToDelete.indexOf(i)} ${DateTime.now()}');
         widget.source.deleteRow(i);
+        print('Delete ${rowsToDelete.indexOf(i)} ${DateTime.now()}');
       }
-          print('AfterDelete ${DateTime.now()}');
-          print('Coverting ${DateTime.now()}');
-      final listToAdd = clipboardContent.reversed.map((i) => widget.source.rowFromClipboard!(i)).toList();
-          print('AfterCoverting ${DateTime.now()}');
-          print('Before Adding ${DateTime.now()}');
-        widget.source
-            .insertRows(cellIndex.rowIndex, listToAdd);
-          print('After adding ${DateTime.now()}');
-      
+      print('AfterDelete ${DateTime.now()}');
+      print('Coverting ${DateTime.now()}');
+      final listToAdd = clipboardContent.reversed
+          .map((i) => widget.source.rowFromClipboard!(i))
+          .toList();
+      print('AfterCoverting ${DateTime.now()}');
+      print('Before Adding ${DateTime.now()}');
+      for (var i in listToAdd) {
+        widget.source.insertRow(cellIndex.rowIndex, i);
+      }
+      print('After adding ${DateTime.now()}');
       setState(() {});
     }
   }
@@ -1267,7 +1270,6 @@ class MyDataGridSource extends Equatable {
   bool? allowDeleteRow(DataGridRow row) => null;
   bool? allowInsertingRow(int rowIndex) => null;
   void insertRow(int index, DataGridRow row) {}
-  void insertRows(int index, List<DataGridRow> row) {}
 
   DataGridRow Function(List<String>)? rowFromClipboard;
 
