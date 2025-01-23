@@ -424,10 +424,10 @@ class _XtraDataGridState extends State<XtraDataGrid> {
       for (var i in rowsToDelete) {
         widget.source.deleteRow(i);
       }
-      for (var i in clipboardContent.reversed) {
+      final listToAdd = clipboardContent.reversed.map((i) => widget.source.rowFromClipboard!(i)).toList();
         widget.source
-            .insertRow(cellIndex.rowIndex, widget.source.rowFromClipboard!(i));
-      }
+            .insertRows(cellIndex.rowIndex, listToAdd);
+      
       setState(() {});
     }
   }
@@ -1260,6 +1260,7 @@ class MyDataGridSource extends Equatable {
   bool? allowDeleteRow(DataGridRow row) => null;
   bool? allowInsertingRow(int rowIndex) => null;
   void insertRow(int index, DataGridRow row) {}
+  void insertRows(int index, List<DataGridRow> row) {}
 
   DataGridRow Function(List<String>)? rowFromClipboard;
 
