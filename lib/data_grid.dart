@@ -117,14 +117,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   }
 
   void sortGridAZ(MyGridColumn column) {
-    widget.source.rows.sort((a, b) => a.cells
-        .firstWhere((e) => e.columnName == column.columnName)
-        .value
-        .toString()
-        .compareTo(b.cells
-            .firstWhere((e) => e.columnName == column.columnName)
-            .value
-            .toString()));
+    if(column.compareValuesForSort == null) return;
+    widget.source.rows.sort(column.compareValuesForSort);
     setState(() {});
   }
 
@@ -702,7 +696,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                             pasteFromClipboard(index);
                           });
                         }),
-                    if (['item', 'account'].contains(column.columnName))
+                    if (column.compareValuesForSort != null)
                       ContextMenuTile(
                           onTap: () {
                             Navigator.of(context).pop();
@@ -1256,12 +1250,14 @@ class MyGridColumn {
   final bool allowEditing;
   // final bool searchableColumn;
   final List<Widget> Function(BuildContext)? contextMenuItems;
+  int Function(dynamic a, dynamic b)? compareValuesForSort;
 
   MyGridColumn({
     required this.label,
     required this.columnName,
     this.width = 100,
     this.contextMenuItems,
+    this.compareValuesForSort,
     this.allowEditing = true,
     // this.searchableColumn = true,
   });
