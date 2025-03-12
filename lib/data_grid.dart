@@ -522,13 +522,6 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               adjustAllColumns();
             },
             title: 'autoFitAllFields'.tr),
-        if (e.columnName != 'index')
-          ContextMenuTile(
-              onTap: () {
-                Navigator.of(c).pop();
-                sortGridAZ(e);
-              },
-              title: 'sortAZ'.tr),
         ...e.contextMenuItems?.call(c) ?? [],
       ],
       child: Container(
@@ -709,6 +702,13 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                             pasteFromClipboard(index);
                           });
                         }),
+                    if (['item', 'account'].contains(column.columnName))
+                      ContextMenuTile(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            sortGridAZ(column);
+                          },
+                          title: 'sortAZ'.tr),
                     if ((column.allowEditing &&
                             widget.source.allowInsertingRow(index.rowIndex) ==
                                 null) ||
@@ -1227,7 +1227,6 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   //     }
   //   }
   // }
-
 }
 
 class ContextMenuTile extends StatelessWidget {
