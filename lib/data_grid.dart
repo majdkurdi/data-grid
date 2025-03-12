@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:data_grid/clipboard_api.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -115,6 +114,18 @@ class _XtraDataGridState extends State<XtraDataGrid> {
 
     widget.resizeColumn(column, w - column.width, fixWidth: w > 50 ? null : 50);
     if (rebuild) setState(() {});
+  }
+
+  void sortGridAZ(MyGridColumn column) {
+    widget.source.rows.sort((a, b) => a.cells
+        .firstWhere((e) => e.columnName == column.columnName)
+        .value
+        .toString()
+        .compareTo(b.cells
+            .firstWhere((e) => e.columnName == column.columnName)
+            .value
+            .toString()));
+    setState(() {});
   }
 
   void adjustAllColumns() {
@@ -511,6 +522,13 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               adjustAllColumns();
             },
             title: 'autoFitAllFields'.tr),
+        if (e.columnName != 'index')
+          ContextMenuTile(
+              onTap: () {
+                Navigator.of(c).pop();
+                sortGridAZ(e);
+              },
+              title: 'autoFitAllFields'.tr),
         ...e.contextMenuItems?.call(c) ?? [],
       ],
       child: Container(
@@ -1176,39 +1194,40 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     );
   }
 
-  Future<void> _onPointerDown(
-      PointerDownEvent event, MyGridColumn column) async {
-    // Check if right mouse button clicked
-    if (event.kind == PointerDeviceKind.mouse &&
-        event.buttons == kSecondaryMouseButton) {
-      final overlay =
-          Overlay.of(context).context.findRenderObject() as RenderBox;
-      final menuItem = await showMenu<int>(
-          context: context,
-          items: [
-            PopupMenuItem(child: Text('groupBy'.tr), value: 1),
-            // PopupMenuItem(child: Text('Cut'), value: 2),
-          ],
-          position: RelativeRect.fromSize(
-              event.position & Size(0, 0.0), overlay.size));
-      // Check if menu item clicked
-      switch (menuItem) {
-        case 1:
-          setState(() => groupByColumn = column);
-          // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          //   content: Text('Copy clicked'),
-          //   behavior: SnackBarBehavior.floating,
-          // ));
-          break;
-        case 2:
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Cut clicked'),
-              behavior: SnackBarBehavior.floating));
-          break;
-        default:
-      }
-    }
-  }
+  // Future<void> _onPointerDown(
+  //     PointerDownEvent event, MyGridColumn column) async {
+  //   // Check if right mouse button clicked
+  //   if (event.kind == PointerDeviceKind.mouse &&
+  //       event.buttons == kSecondaryMouseButton) {
+  //     final overlay =
+  //         Overlay.of(context).context.findRenderObject() as RenderBox;
+  //     final menuItem = await showMenu<int>(
+  //         context: context,
+  //         items: [
+  //           PopupMenuItem(child: Text('groupBy'.tr), value: 1),
+  //           // PopupMenuItem(child: Text('Cut'), value: 2),
+  //         ],
+  //         position: RelativeRect.fromSize(
+  //             event.position & Size(0, 0.0), overlay.size));
+  //     // Check if menu item clicked
+  //     switch (menuItem) {
+  //       case 1:
+  //         setState(() => groupByColumn = column);
+  //         // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //         //   content: Text('Copy clicked'),
+  //         //   behavior: SnackBarBehavior.floating,
+  //         // ));
+  //         break;
+  //       case 2:
+  //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //             content: Text('Cut clicked'),
+  //             behavior: SnackBarBehavior.floating));
+  //         break;
+  //       default:
+  //     }
+  //   }
+  // }
+
 }
 
 class ContextMenuTile extends StatelessWidget {
