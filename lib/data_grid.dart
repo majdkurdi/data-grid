@@ -118,9 +118,16 @@ class _XtraDataGridState extends State<XtraDataGrid> {
 
   void sortGridAZ(MyGridColumn column) {
     if (column.compareValuesForSort == null) return;
-    widget.source.rows.sort((a, b) => column.compareValuesForSort!(
-        a.cells.firstWhere((e) => e.columnName == column.columnName).value,
-        b.cells.firstWhere((e) => e.columnName == column.columnName).value));
+    widget.source.rows.sort((a, b) {
+      final aVal =
+          a.cells.firstWhere((e) => e.columnName == column.columnName).value;
+      final bVal =
+          b.cells.firstWhere((e) => e.columnName == column.columnName).value;
+      if (aVal == null && bVal == null) return 0;
+      if (aVal == null) return 1;
+      if (bVal == null) return -1;
+      return column.compareValuesForSort!(aVal, bVal);
+    });
     setState(() {});
   }
 
