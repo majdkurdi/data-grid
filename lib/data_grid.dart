@@ -528,7 +528,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                 Navigator.of(c).pop();
                 sortGridAZ(e);
               },
-              title: 'autoFitAllFields'.tr),
+              title: 'sortAZ'.tr),
         ...e.contextMenuItems?.call(c) ?? [],
       ],
       child: Container(
