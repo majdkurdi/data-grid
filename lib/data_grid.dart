@@ -34,9 +34,11 @@ class XtraDataGrid extends StatefulWidget {
       this.shortcuts,
       this.onRebuild,
       this.groupNameBuilder,
+      this.oddRowColor,
       this.rowHeight = 22});
   final MyDataGridSource source;
   final Color? headerColor;
+  final Color? oddRowColor;
   final TextStyle? headerStyle;
   List<MyGridColumn> columns;
   final void Function(int, int)? onColumnsReorder;
@@ -753,7 +755,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                     ? Get.theme.colorScheme.primary.withOpacity(0.4)
                     : index.rowIndex.isEven
                         ? Colors.white
-                        : Colors.grey.shade400),
+                        : widget.oddRowColor?.withValues(alpha: .4) ?? Colors.grey.shade400),
             height: widget.rowHeight,
             width: column.width,
             child: editMode && index.toString() == currentCell.toString()
