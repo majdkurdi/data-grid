@@ -755,7 +755,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                     ? Get.theme.colorScheme.primary.withOpacity(0.4)
                     : index.rowIndex.isEven
                         ? Colors.white
-                        : widget.oddRowColor?.withOpacity(0.4) ?? Colors.grey.shade400),
+                        : widget.oddRowColor ?? Colors.grey.shade400),
             height: widget.rowHeight,
             width: column.width,
             child: editMode && index.toString() == currentCell.toString()
