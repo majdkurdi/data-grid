@@ -250,7 +250,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           currentCell.rowIndex != 0 &&
           !editMode &&
           widget.columns[currentCell.columnIndex].allowCopyLastRow) {
-        widget.source.firstChar = widget.source.rows[currentCell.rowIndex].cells
+        widget.source.newValue = widget.source.rows[currentCell.rowIndex].cells
             .firstWhere((e) =>
                 e.columnName ==
                 widget.columns[currentCell.columnIndex].columnName)
@@ -1323,6 +1323,7 @@ class MyDataGridSource extends Equatable {
   DataGridRow Function(List<String>)? rowFromClipboard;
 
   String firstChar = '';
+    dynamic newValue;
   final focus = FocusNode();
   final editingController = TextEditingController();
 
