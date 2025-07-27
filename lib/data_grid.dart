@@ -250,17 +250,26 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           currentCell.rowIndex != 0 &&
           !editMode &&
           widget.columns[currentCell.columnIndex].allowCopyLastRow) {
-        widget.source.firstChar = widget.source.rows[currentCell.rowIndex -1].cells
+        final cellVal = widget.source.rows[currentCell.rowIndex - 1].cells
             .firstWhere((e) =>
                 e.columnName ==
                 widget.columns[currentCell.columnIndex].columnName)
-            .value.toString();
+            .value;
+        widget.source.firstChar = widget
+                .columns[currentCell.columnIndex].cellValueStringforInput
+                ?.call(cellVal) ??
+            cellVal?.toString() ??
+            '';
         editMode = widget.source.onCellBeginEdit(
             widget.source.rows[currentCell.rowIndex],
             currentCell,
             widget.columns[currentCell.columnIndex]);
-         Future.delayed(const Duration(milliseconds: 100), () => endEdit(currentCell.rowIndex != widget.source.rows.length -1 ? RowColumnIndex(currentCell.rowIndex +1, currentCell.columnIndex) : null));
-        
+        Future.delayed(
+            const Duration(milliseconds: 100),
+            () => endEdit(currentCell.rowIndex != widget.source.rows.length - 1
+                ? RowColumnIndex(
+                    currentCell.rowIndex + 1, currentCell.columnIndex)
+                : null));
       } else if (event.logicalKey == LogicalKeyboardKey.tab) {
         final shiftPressed =
             keysPressed.contains(LogicalKeyboardKey.shiftLeft) ||
