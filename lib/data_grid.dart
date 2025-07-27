@@ -259,7 +259,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             widget.source.rows[currentCell.rowIndex],
             currentCell,
             widget.columns[currentCell.columnIndex]);
-        await Future.delayed(const Duration(milliseconds: 100));
+        await Future.delayed(const Duration(milliseconds: 500));
         endEdit(currentCell.rowIndex != widget.source.rows.length -1 ? RowColumnIndex(currentCell.rowIndex +1, currentCell.columnIndex) : null);
       } else if (event.logicalKey == LogicalKeyboardKey.tab) {
         final shiftPressed =
