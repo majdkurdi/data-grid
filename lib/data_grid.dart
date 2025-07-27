@@ -1287,6 +1287,7 @@ class MyGridColumn {
   double width;
   final bool allowEditing;
   final bool allowCopyLastRow;
+  final String Function(dynamic)? cellValueStringforInput;
   // final bool searchableColumn;
   final List<Widget> Function(BuildContext)? contextMenuItems;
   int Function(dynamic a, dynamic b)? compareValuesForSort;
@@ -1297,8 +1298,9 @@ class MyGridColumn {
     this.width = 100,
     this.contextMenuItems,
     this.compareValuesForSort,
+    this.cellValueStringforInput,
     this.allowEditing = true,
-    this.allowCopyLastRow = true,
+    this.allowCopyLastRow = false,
     // this.searchableColumn = true,
   });
 }
