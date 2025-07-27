@@ -1298,7 +1298,7 @@ class MyGridColumn {
     this.contextMenuItems,
     this.compareValuesForSort,
     this.allowEditing = true,
-    this.allowCopyLastRow = false,
+    this.allowCopyLastRow = true,
     // this.searchableColumn = true,
   });
 }
