@@ -250,18 +250,17 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           currentCell.rowIndex != 0 &&
           !editMode &&
           widget.columns[currentCell.columnIndex].allowCopyLastRow) {
-        widget.source.newValue = widget.source.rows[currentCell.rowIndex].cells
+        widget.source.firstChar = widget.source.rows[currentCell.rowIndex].cells
             .firstWhere((e) =>
                 e.columnName ==
                 widget.columns[currentCell.columnIndex].columnName)
-            .value
-            .toString();
+            .value.toString();
         editMode = widget.source.onCellBeginEdit(
             widget.source.rows[currentCell.rowIndex],
             currentCell,
             widget.columns[currentCell.columnIndex]);
-        await Future.delayed(const Duration(milliseconds: 10));
-        endEdit();
+        // await Future.delayed(const Duration(milliseconds: 10));
+        // endEdit();
       } else if (event.logicalKey == LogicalKeyboardKey.tab) {
         final shiftPressed =
             keysPressed.contains(LogicalKeyboardKey.shiftLeft) ||
@@ -1323,7 +1322,6 @@ class MyDataGridSource extends Equatable {
   DataGridRow Function(List<String>)? rowFromClipboard;
 
   String firstChar = '';
-    dynamic newValue;
   final focus = FocusNode();
   final editingController = TextEditingController();
 
