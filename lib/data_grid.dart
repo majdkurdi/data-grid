@@ -234,6 +234,29 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             widget.source.rows[currentCell.rowIndex],
             currentCell,
             widget.columns[currentCell.columnIndex]);
+      } else if (event.logicalKey == LogicalKeyboardKey.delete &&
+          (widget.columns[currentCell.columnIndex].allowEditing &&
+              widget.source.allowDeleteRow(
+                      widget.source.rows[currentCell.rowIndex]) !=
+                  false) &&
+          !editMode) {
+        final confirm = await widget.source
+            .confirmDeleteRow(widget.source.rows[currentCell.rowIndex]);
+        if (confirm) {
+          widget.source.deleteRow(widget.source.rows[currentCell.rowIndex]);
+        }
+      } else if (event.logicalKey == LogicalKeyboardKey.f7 &&
+          widget.columns[currentCell.columnIndex].allowEditing &&
+          currentCell.rowIndex != 0 &&
+          !editMode && widget.columns[currentCell.columnIndex].allowCopyLastRow) {
+        widget.source.firstChar = widget
+            .source.rows[currentCell.rowIndex].cells
+            .firstWhere((e) =>
+                e.columnName ==
+                widget.columns[currentCell.columnIndex].columnName)
+            .value
+            .toString();
+        endEdit();
       } else if (event.logicalKey == LogicalKeyboardKey.tab) {
         final shiftPressed =
             keysPressed.contains(LogicalKeyboardKey.shiftLeft) ||
@@ -1259,6 +1282,7 @@ class MyGridColumn {
   final String columnName;
   double width;
   final bool allowEditing;
+  final bool allowCopyLastRow;
   // final bool searchableColumn;
   final List<Widget> Function(BuildContext)? contextMenuItems;
   int Function(dynamic a, dynamic b)? compareValuesForSort;
@@ -1270,6 +1294,7 @@ class MyGridColumn {
     this.contextMenuItems,
     this.compareValuesForSort,
     this.allowEditing = true,
+    this.allowCopyLastRow = false,
     // this.searchableColumn = true,
   });
 }
@@ -1286,6 +1311,7 @@ class MyDataGridSource extends Equatable {
 
   void deleteRow(DataGridRow row) {}
   bool? allowDeleteRow(DataGridRow row) => null;
+  Future<bool> confirmDeleteRow(DataGridRow row) async => false;
   bool? allowInsertingRow(int rowIndex) => null;
   void insertRow(int index, DataGridRow row) {}
 
