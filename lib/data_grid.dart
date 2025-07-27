@@ -248,14 +248,19 @@ class _XtraDataGridState extends State<XtraDataGrid> {
       } else if (event.logicalKey == LogicalKeyboardKey.f7 &&
           widget.columns[currentCell.columnIndex].allowEditing &&
           currentCell.rowIndex != 0 &&
-          !editMode && widget.columns[currentCell.columnIndex].allowCopyLastRow) {
-        widget.source.firstChar = widget
-            .source.rows[currentCell.rowIndex].cells
+          !editMode &&
+          widget.columns[currentCell.columnIndex].allowCopyLastRow) {
+        widget.source.firstChar = widget.source.rows[currentCell.rowIndex].cells
             .firstWhere((e) =>
                 e.columnName ==
                 widget.columns[currentCell.columnIndex].columnName)
             .value
             .toString();
+        editMode = widget.source.onCellBeginEdit(
+            widget.source.rows[currentCell.rowIndex],
+            currentCell,
+            widget.columns[currentCell.columnIndex]);
+        await Future.delayed(const Duration(milliseconds: 10));
         endEdit();
       } else if (event.logicalKey == LogicalKeyboardKey.tab) {
         final shiftPressed =
@@ -282,7 +287,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                   event.logicalKey.keyLabel.replaceAll('Numpad ', '')) ||
               arabicNumbers.contains(
                   event.logicalKey.keyLabel.replaceAll('Numpad ', '')) ||
-              event.logicalKey == LogicalKeyboardKey.delete) &&
+              event.logicalKey == LogicalKeyboardKey.backspace) &&
           !editMode &&
           !HardwareKeyboard.instance.logicalKeysPressed
               .any((e) => shiftKeys.contains(e)) &&
