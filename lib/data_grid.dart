@@ -250,16 +250,14 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           currentCell.rowIndex != 0 &&
           !editMode &&
           widget.columns[currentCell.columnIndex].allowCopyLastRow) {
+        final col = widget.columns[currentCell.columnIndex];
         final cellVal = widget.source.rows[currentCell.rowIndex - 1].cells
-            .firstWhere((e) =>
-                e.columnName ==
-                widget.columns[currentCell.columnIndex].columnName)
+            .firstWhere((e) => e.columnName == col.columnName)
             .value;
-        widget.source.firstChar = widget
-                .columns[currentCell.columnIndex].cellValueStringforInput
-                ?.call(cellVal) ??
-            cellVal?.toString() ??
-            '';
+
+        widget.source.firstChar = col.cellValueStringforInput != null
+            ? col.cellValueStringforInput!(cellVal)
+            : cellVal?.toString() ?? '';
         editMode = widget.source.onCellBeginEdit(
             widget.source.rows[currentCell.rowIndex],
             currentCell,
