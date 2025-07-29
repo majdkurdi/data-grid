@@ -245,7 +245,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         if (confirm) {
           widget.source.deleteRow(widget.source.rows[currentCell.rowIndex]);
         }
-      } else if (event.logicalKey == LogicalKeyboardKey.f7 &&
+      } else if (event.logicalKey == LogicalKeyboardKey.f8 &&
           widget.columns[currentCell.columnIndex].allowEditing &&
           currentCell.rowIndex != 0 &&
           !editMode &&
