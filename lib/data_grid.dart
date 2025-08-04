@@ -235,15 +235,19 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             currentCell,
             widget.columns[currentCell.columnIndex]);
       } else if (event.logicalKey == LogicalKeyboardKey.delete &&
-          (widget.columns[currentCell.columnIndex].allowEditing &&
-              widget.source.allowDeleteRow(
-                      widget.source.rows[currentCell.rowIndex]) !=
-                  false) &&
+          widget.columns[currentCell.columnIndex].allowEditing &&
           !editMode) {
-        final confirm = await widget.source
-            .confirmDeleteRow(widget.source.rows[currentCell.rowIndex]);
-        if (confirm) {
-          widget.source.deleteRow(widget.source.rows[currentCell.rowIndex]);
+        if (shiftKeys.any((e) => keysPressed.contains(e)) &&
+            widget.source
+                    .allowDeleteRow(widget.source.rows[currentCell.rowIndex]) !=
+                false) {
+          final confirm = await widget.source
+              .confirmDeleteRow(widget.source.rows[currentCell.rowIndex]);
+          if (confirm) {
+            widget.source.deleteRow(widget.source.rows[currentCell.rowIndex]);
+          }
+        } else {
+          widget.source.onCellDelete(currentCell);
         }
       } else if (event.logicalKey == LogicalKeyboardKey.f8 &&
           widget.columns[currentCell.columnIndex].allowEditing &&
@@ -1323,6 +1327,7 @@ class MyDataGridSource extends Equatable {
   List<DataGridRow> rows = <DataGridRow>[];
 
   void deleteRow(DataGridRow row) {}
+  void onCellDelete(RowColumnIndex cellIndex) {}
   bool? allowDeleteRow(DataGridRow row) => null;
   Future<bool> confirmDeleteRow(DataGridRow row) async => false;
   bool? allowInsertingRow(int rowIndex) => null;
