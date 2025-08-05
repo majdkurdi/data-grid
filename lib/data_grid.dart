@@ -448,6 +448,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   void endEdit([RowColumnIndex? nextCell]) async {
     await widget.source.onCellSubmit(widget.source.rows[currentCell.rowIndex],
         currentCell, widget.columns[currentCell.columnIndex]);
+        if(!editMode) return;
     editMode = false;
     currentCell = nextCell ?? _nextCell();
     // while(!widget.columns[currentCell.columnIndex].allowEditing){
@@ -1334,7 +1335,6 @@ class MyDataGridSource extends Equatable {
   void insertRow(int index, DataGridRow row) {}
 
   DataGridRow Function(List<String>)? rowFromClipboard;
-
   String firstChar = '';
   final focus = FocusNode();
   final editingController = TextEditingController();
