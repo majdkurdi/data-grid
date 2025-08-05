@@ -85,6 +85,7 @@ class XtraDataGrid extends StatefulWidget {
 class _XtraDataGridState extends State<XtraDataGrid> {
   RowColumnIndex currentCell = RowColumnIndex(0, 0);
   bool editMode = false;
+  bool _endingEditMode = false;
   // bool columnDragging = false;
   late final focusNode = widget.focusNode ?? FocusNode();
   final scrollController = AutoScrollController();
@@ -445,10 +446,13 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         : RowColumnIndex(nextRow, nextColumn);
   }
 
+  
+
   void endEdit([RowColumnIndex? nextCell]) async {
+        if(!editMode || _endingEditMode) return;
+        _endingEditMode = true;
     await widget.source.onCellSubmit(widget.source.rows[currentCell.rowIndex],
         currentCell, widget.columns[currentCell.columnIndex]);
-        if(!editMode) return;
     editMode = false;
     currentCell = nextCell ?? _nextCell();
     // while(!widget.columns[currentCell.columnIndex].allowEditing){
@@ -456,6 +460,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     // }
     setState(() {});
     focusNode.requestFocus();
+    _endingEditMode = false;
   }
 
   void pasteFromClipboard(RowColumnIndex cellIndex) async {
