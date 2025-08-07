@@ -776,7 +776,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                                 widget.source.allowDeleteRow(row) == null) ||
                             widget.source.allowDeleteRow(row) == true))
                       ContextMenuTile(
-                          title: 'deleteRow'.tr,
+                          title: '${'deleteRow'.tr} (Shift + Del)',
                           onTap: () {
                             setState(() {
                               Navigator.of(context).pop();
