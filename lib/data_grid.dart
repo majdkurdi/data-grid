@@ -250,6 +250,17 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         } else {
           widget.source.onCellDelete(currentCell);
         }
+      } else if (event.logicalKey == LogicalKeyboardKey.delete &&
+          !editMode &&
+          shiftKeys.any((e) => keysPressed.contains(e)) &&
+          widget.source
+                  .allowDeleteRow(widget.source.rows[currentCell.rowIndex]) !=
+              false) {
+        final confirm = await widget.source
+            .confirmDeleteRow(widget.source.rows[currentCell.rowIndex]);
+        if (confirm) {
+          widget.source.deleteRow(widget.source.rows[currentCell.rowIndex]);
+        }
       } else if (event.logicalKey == LogicalKeyboardKey.f8 &&
           widget.columns[currentCell.columnIndex].allowEditing &&
           currentCell.rowIndex != 0 &&
@@ -446,11 +457,9 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         : RowColumnIndex(nextRow, nextColumn);
   }
 
-  
-
   void endEdit([RowColumnIndex? nextCell]) async {
-        if(!editMode || _endingEditMode) return;
-        _endingEditMode = true;
+    if (!editMode || _endingEditMode) return;
+    _endingEditMode = true;
     await widget.source.onCellSubmit(widget.source.rows[currentCell.rowIndex],
         currentCell, widget.columns[currentCell.columnIndex]);
     editMode = false;
