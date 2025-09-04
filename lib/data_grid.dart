@@ -752,6 +752,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                             copyCellContent(cell);
                           });
                         }),
+                        if(column.allowEditing)
                     ContextMenuTile(
                         title: 'paste'.tr,
                         onTap: () {
