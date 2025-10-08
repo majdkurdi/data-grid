@@ -35,6 +35,10 @@ class XtraDataGrid extends StatefulWidget {
       this.onRebuild,
       this.groupNameBuilder,
       this.oddRowColor,
+      this.ctr1Shortcut,
+      this.ctr2Shortcut,
+      this.ctr3Shortcut,
+      this.ctrEqualShortcut,
       this.rowHeight = 22});
   final MyDataGridSource source;
   final Color? headerColor;
@@ -55,6 +59,18 @@ class XtraDataGrid extends StatefulWidget {
   final FocusNode? focusNode;
   final List<ContextMenuTile> Function(BuildContext, DataGridRow, DataGridCell)?
       contextMenu;
+  final void Function(
+          RowColumnIndex cellIndex, DataGridRow row, DataGridCell cell)?
+      ctr1Shortcut;
+  final void Function(
+          RowColumnIndex cellIndex, DataGridRow row, DataGridCell cell)?
+      ctr2Shortcut;
+  final void Function(
+          RowColumnIndex cellIndex, DataGridRow row, DataGridCell cell)?
+      ctr3Shortcut;
+  final void Function(
+          RowColumnIndex cellIndex, DataGridRow row, DataGridCell cell)?
+      ctrEqualShortcut;
   final Map<LogicalKeyboardKey, void Function(dynamic currenctCellValue)>?
       shortcuts;
   final void Function(dynamic currenctCellValue, dynamic currentRowValue)?
@@ -302,7 +318,39 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           copyCellContent(widget.source.rows[currentCell.rowIndex]
               .cells[currentCell.columnIndex]);
         }
-      } else if ((englishLetters
+      } else if (event.logicalKey.keyLabel.replaceArabicNumber() == '1' &&
+          controlKeys.any((k) => keysPressed.contains(k))) {
+        widget.ctr1Shortcut?.call(
+            currentCell,
+            widget.source.rows[currentCell.rowIndex],
+            widget.source.rows[currentCell.rowIndex].cells.firstWhere((e) =>
+                e.columnName ==
+                widget.columns[currentCell.columnIndex].columnName));
+      } else if (event.logicalKey.keyLabel.replaceArabicNumber() == '2' &&
+          controlKeys.any((k) => keysPressed.contains(k))) {
+        widget.ctr2Shortcut?.call(
+            currentCell,
+            widget.source.rows[currentCell.rowIndex],
+            widget.source.rows[currentCell.rowIndex].cells.firstWhere((e) =>
+                e.columnName ==
+                widget.columns[currentCell.columnIndex].columnName));
+      }else if (event.logicalKey.keyLabel.replaceArabicNumber() == '3' &&
+          controlKeys.any((k) => keysPressed.contains(k))) {
+        widget.ctr3Shortcut?.call(
+            currentCell,
+            widget.source.rows[currentCell.rowIndex],
+            widget.source.rows[currentCell.rowIndex].cells.firstWhere((e) =>
+                e.columnName ==
+                widget.columns[currentCell.columnIndex].columnName));
+      }else if (event.logicalKey == LogicalKeyboardKey.equal &&
+          controlKeys.any((k) => keysPressed.contains(k))) {
+        widget.ctrEqualShortcut?.call(
+            currentCell,
+            widget.source.rows[currentCell.rowIndex],
+            widget.source.rows[currentCell.rowIndex].cells.firstWhere((e) =>
+                e.columnName ==
+                widget.columns[currentCell.columnIndex].columnName));
+      }   else if ((englishLetters
                   .contains(event.logicalKey.keyLabel.toLowerCase()) ||
               arabicLetters.contains(event.character) ||
               nums.contains(
@@ -752,15 +800,15 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                             copyCellContent(cell);
                           });
                         }),
-                        if(column.allowEditing)
-                    ContextMenuTile(
-                        title: 'paste'.tr,
-                        onTap: () {
-                          setState(() {
-                            Navigator.of(context).pop();
-                            pasteFromClipboard(index);
-                          });
-                        }),
+                    if (column.allowEditing)
+                      ContextMenuTile(
+                          title: 'paste'.tr,
+                          onTap: () {
+                            setState(() {
+                              Navigator.of(context).pop();
+                              pasteFromClipboard(index);
+                            });
+                          }),
                     if (column.compareValuesForSort != null)
                       ContextMenuTile(
                           onTap: () {
