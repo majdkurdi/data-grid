@@ -35,10 +35,10 @@ class XtraDataGrid extends StatefulWidget {
       this.onRebuild,
       this.groupNameBuilder,
       this.oddRowColor,
-      this.ctr1Shortcut,
-      this.ctr2Shortcut,
-      this.ctr3Shortcut,
-      this.ctrEqualShortcut,
+      this.alt1Shortcut,
+      this.alt2Shortcut,
+      this.alt3Shortcut,
+      this.altEqualShortcut,
       this.rowHeight = 22});
   final MyDataGridSource source;
   final Color? headerColor;
@@ -61,16 +61,16 @@ class XtraDataGrid extends StatefulWidget {
       contextMenu;
   final void Function(
           RowColumnIndex cellIndex, DataGridRow row, DataGridCell cell)?
-      ctr1Shortcut;
+      alt1Shortcut;
   final void Function(
           RowColumnIndex cellIndex, DataGridRow row, DataGridCell cell)?
-      ctr2Shortcut;
+      alt2Shortcut;
   final void Function(
           RowColumnIndex cellIndex, DataGridRow row, DataGridCell cell)?
-      ctr3Shortcut;
+      alt3Shortcut;
   final void Function(
           RowColumnIndex cellIndex, DataGridRow row, DataGridCell cell)?
-      ctrEqualShortcut;
+      altEqualShortcut;
   final Map<LogicalKeyboardKey, void Function(dynamic currenctCellValue)>?
       shortcuts;
   final void Function(dynamic currenctCellValue, dynamic currentRowValue)?
@@ -165,6 +165,10 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     final controlKeys = [
       LogicalKeyboardKey.controlLeft,
       LogicalKeyboardKey.controlRight
+    ];
+    final altKeys = [
+      LogicalKeyboardKey.altLeft,
+      LogicalKeyboardKey.altRight,
     ];
     final keysPressed = HardwareKeyboard.instance.logicalKeysPressed;
     if (event is KeyDownEvent) {
@@ -319,32 +323,32 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               .cells[currentCell.columnIndex]);
         }
       } else if (event.logicalKey.keyLabel.replaceArabicNumber() == '1' &&
-          controlKeys.any((k) => keysPressed.contains(k))) {
-        widget.ctr1Shortcut?.call(
+          altKeys.any((k) => keysPressed.contains(k))) {
+        widget.alt1Shortcut?.call(
             currentCell,
             widget.source.rows[currentCell.rowIndex],
             widget.source.rows[currentCell.rowIndex].cells.firstWhere((e) =>
                 e.columnName ==
                 widget.columns[currentCell.columnIndex].columnName));
       } else if (event.logicalKey.keyLabel.replaceArabicNumber() == '2' &&
-          controlKeys.any((k) => keysPressed.contains(k))) {
-        widget.ctr2Shortcut?.call(
+          altKeys.any((k) => keysPressed.contains(k))) {
+        widget.alt2Shortcut?.call(
             currentCell,
             widget.source.rows[currentCell.rowIndex],
             widget.source.rows[currentCell.rowIndex].cells.firstWhere((e) =>
                 e.columnName ==
                 widget.columns[currentCell.columnIndex].columnName));
       }else if (event.logicalKey.keyLabel.replaceArabicNumber() == '3' &&
-          controlKeys.any((k) => keysPressed.contains(k))) {
-        widget.ctr3Shortcut?.call(
+          altKeys.any((k) => keysPressed.contains(k))) {
+        widget.alt3Shortcut?.call(
             currentCell,
             widget.source.rows[currentCell.rowIndex],
             widget.source.rows[currentCell.rowIndex].cells.firstWhere((e) =>
                 e.columnName ==
                 widget.columns[currentCell.columnIndex].columnName));
-      }else if (event.logicalKey == LogicalKeyboardKey.equal &&
-          controlKeys.any((k) => keysPressed.contains(k))) {
-        widget.ctrEqualShortcut?.call(
+      }else if ((event.logicalKey == LogicalKeyboardKey.equal) &&
+          altKeys.any((k) => keysPressed.contains(k))) {
+        widget.altEqualShortcut?.call(
             currentCell,
             widget.source.rows[currentCell.rowIndex],
             widget.source.rows[currentCell.rowIndex].cells.firstWhere((e) =>
