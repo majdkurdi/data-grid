@@ -49,7 +49,7 @@ class XtraDataGrid extends StatefulWidget {
   final void Function(MyGridColumn column, double dx)? onColumnResize;
   final double rowHeight;
   final MyGridColumn? groupByColumn;
-  final void Function(DataGridRow, RowColumnIndex)? onSelected;
+  final void Function(DataGridRow, RowColumnIndex, DataGridCell)? onSelected;
   final void Function(DataGridRow)? onLongPress;
   final void Function(RowColumnIndex)? setSelectedCell;
   final void Function(DataGridRow)? onDoubleTap;
@@ -744,7 +744,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                 currentCell = index;
 
                 if (widget.onSelected != null) {
-                  widget.onSelected!(row, index);
+                  widget.onSelected!(row, index, cell);
                 }
                 if (groupByColumn == null) {
                   if (editMode &&
@@ -770,7 +770,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           currentCell = index;
 
           if (widget.onSelected != null) {
-            widget.onSelected!(row, index);
+            widget.onSelected!(row, index, cell);
           }
           if (groupByColumn == null) {
             if (editMode && currentCell.toString() != oldCell.toString()) {
