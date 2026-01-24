@@ -965,6 +965,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                   focusNode: searchFieldFocus,
                   controller: searchController,
                   decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
                       hint: Text('${'searchIn'.tr} ${searchColumn!.label}')),
                   onSubmitted: (value) => setState(() {}),
                 ),
