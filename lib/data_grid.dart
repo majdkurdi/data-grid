@@ -104,11 +104,14 @@ class _XtraDataGridState extends State<XtraDataGrid> {
   bool _endingEditMode = false;
   // bool columnDragging = false;
   late final focusNode = widget.focusNode ?? FocusNode();
+  late final searchFieldFocus = FocusNode();
   final scrollController = AutoScrollController();
   final headerController = AutoScrollController();
   final verticalController = AutoScrollController();
+  final searchController = TextEditingController();
   // final groupsController = ScrollController();
   final indexesController = AutoScrollController();
+  MyGridColumn? searchColumn;
   MyGridColumn? groupByColumn;
   late Map<String, List<GlobalKey>> cellsKeys = Map.fromEntries(
       widget.columns.map((e) => MapEntry(e.columnName, <GlobalKey>[])));
@@ -338,7 +341,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             widget.source.rows[currentCell.rowIndex].cells.firstWhere((e) =>
                 e.columnName ==
                 widget.columns[currentCell.columnIndex].columnName));
-      }else if (event.logicalKey.keyLabel.replaceArabicNumber() == '3' &&
+      } else if (event.logicalKey.keyLabel.replaceArabicNumber() == '3' &&
           altKeys.any((k) => keysPressed.contains(k))) {
         widget.alt3Shortcut?.call(
             currentCell,
@@ -346,7 +349,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             widget.source.rows[currentCell.rowIndex].cells.firstWhere((e) =>
                 e.columnName ==
                 widget.columns[currentCell.columnIndex].columnName));
-      }else if ((event.logicalKey == LogicalKeyboardKey.equal) &&
+      } else if ((event.logicalKey == LogicalKeyboardKey.equal) &&
           altKeys.any((k) => keysPressed.contains(k))) {
         widget.altEqualShortcut?.call(
             currentCell,
@@ -354,7 +357,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             widget.source.rows[currentCell.rowIndex].cells.firstWhere((e) =>
                 e.columnName ==
                 widget.columns[currentCell.columnIndex].columnName));
-      }   else if ((englishLetters
+      } else if ((englishLetters
                   .contains(event.logicalKey.keyLabel.toLowerCase()) ||
               arabicLetters.contains(event.character) ||
               nums.contains(
@@ -595,6 +598,8 @@ class _XtraDataGridState extends State<XtraDataGrid> {
     if (widget.focusNode == null) {
       focusNode.dispose();
     }
+    searchController.dispose();
+    searchFieldFocus.dispose();
     scrollController.dispose();
     verticalController.dispose();
     indexesController.dispose();
@@ -630,6 +635,14 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             onTap: () {
               Navigator.of(c).pop();
               adjustAllColumns();
+            },
+            title: 'autoFitAllFields'.tr),
+        ContextMenuTile(
+            onTap: () {
+              Navigator.of(c).pop();
+              searchController.text = '';
+              setState(() => searchColumn = e);
+              searchFieldFocus.requestFocus();
             },
             title: 'autoFitAllFields'.tr),
         ...e.contextMenuItems?.call(c) ?? [],
@@ -859,9 +872,15 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                 color: currentCell.toString() == index.toString() &&
                         widget.manualFocus != false
                     ? Get.theme.colorScheme.primary.withOpacity(0.4)
-                    : index.rowIndex.isEven
-                        ? Colors.white
-                        : widget.oddRowColor ?? Colors.grey.shade400),
+                    : searchColumn?.columnName == column.columnName &&
+                            searchController.text.isNotEmpty &&
+                            cell.value
+                                .toString()
+                                .contains(searchController.text)
+                        ? Colors.amber[400]
+                        : index.rowIndex.isEven
+                            ? Colors.white
+                            : widget.oddRowColor ?? Colors.grey.shade400),
             height: widget.rowHeight,
             width: column.width,
             child: editMode && index.toString() == currentCell.toString()
@@ -935,373 +954,409 @@ class _XtraDataGridState extends State<XtraDataGrid> {
       widget.source.onCellCancelEdit(currentCell);
       editMode = false;
     }
-    return ScrollConfiguration(
-      behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          double requiredWidth = 0;
-          for (var i in widget.columns) {
-            requiredWidth += i.width;
-          }
-          final scrollableGrid = requiredWidth >= constraints.constrainWidth();
-          double spaceForLastColumn = constraints.constrainWidth();
-          for (var i in widget.columns) {
-            if (i != widget.columns.last) {
-              spaceForLastColumn -= i.width;
-            }
-          }
+    return Column(
+      children: [
+        if (searchColumn != null)
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  focusNode: searchFieldFocus,
+                  decoration: InputDecoration(
+                      hint: Text('${'searchIn'.tr} ${searchColumn!.label}')),
+                  onSubmitted: (value) => setState(() {}),
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() => searchColumn = null);
+                },
+                icon: const Icon(Icons.close),
+              ),
+            ],
+          ),
+        Expanded(
+          child: ScrollConfiguration(
+            behavior:
+                ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                double requiredWidth = 0;
+                for (var i in widget.columns) {
+                  requiredWidth += i.width;
+                }
+                final scrollableGrid =
+                    requiredWidth >= constraints.constrainWidth();
+                double spaceForLastColumn = constraints.constrainWidth();
+                for (var i in widget.columns) {
+                  if (i != widget.columns.last) {
+                    spaceForLastColumn -= i.width;
+                  }
+                }
 
-          Widget headers() => SizedBox(
-                height: widget.rowHeight,
-                child: Row(
-                  children: [
-                    _headerCell(MyGridColumn(
-                        label: '', columnName: 'index', width: 30)),
-                    Expanded(
-                      child: NotificationListener(
-                        onNotification: (ScrollNotification scrollInfo) {
-                          if (scrollController.hasClients &&
-                              scrollController.position.pixels !=
-                                  scrollInfo.metrics.pixels) {
-                            scrollController.jumpTo(scrollInfo.metrics.pixels);
-                          }
-                          return true;
-                        },
-                        child: ListView(
-                            physics: const ClampingScrollPhysics(),
-                            controller: headerController,
-                            // dragStartBehavior: DragStartBehavior.down,
-                            // onReorderStart: (index) => print(index),
-                            scrollDirection: Axis.horizontal,
-                            // buildDefaultDragHandles: false,
-                            // physics: const NeverScrollableScrollPhysics(),
-                            // shrinkWrap: true,
-                            // onReorderStart: (_) {
-                            //   print('start');
-                            //   setState(() => columnDragging = true);
-                            // },
-                            // onReorderEnd: (_) =>
-                            //     setState(() => columnDragging = false),
-                            // onReorder: (oldI, newI) {
-                            //   if (widget.onColumnsReorder != null) {
-                            //     widget.onColumnsReorder!(oldI, newI);
-                            //   }
-                            // },
-                            children: widget.columns.map<Widget>((e) {
-                              final i = widget.columns.indexOf(e);
-                              return AutoScrollTag(
-                                index: i,
-                                controller: headerController,
-                                key: ValueKey(i),
-                                child: MouseRegion(
-                                  cursor: widget.onColumnsReorder != null
-                                      ? SystemMouseCursors.grab
-                                      : SystemMouseCursors.basic,
-                                  // key: ValueKey(e.columnName),
-                                  child: Builder(
-                                    builder: (ct) {
-                                      return !scrollableGrid &&
-                                              widget.columns.last == e
-                                          ? SizedBox(
-                                              height: widget.rowHeight,
-                                              width: spaceForLastColumn - 30,
-                                              child: _headerCell(e),
-                                            )
-                                          : _headerCell(e);
-                                    },
+                Widget headers() => SizedBox(
+                      height: widget.rowHeight,
+                      child: Row(
+                        children: [
+                          _headerCell(MyGridColumn(
+                              label: '', columnName: 'index', width: 30)),
+                          Expanded(
+                            child: NotificationListener(
+                              onNotification: (ScrollNotification scrollInfo) {
+                                if (scrollController.hasClients &&
+                                    scrollController.position.pixels !=
+                                        scrollInfo.metrics.pixels) {
+                                  scrollController
+                                      .jumpTo(scrollInfo.metrics.pixels);
+                                }
+                                return true;
+                              },
+                              child: ListView(
+                                  physics: const ClampingScrollPhysics(),
+                                  controller: headerController,
+                                  // dragStartBehavior: DragStartBehavior.down,
+                                  // onReorderStart: (index) => print(index),
+                                  scrollDirection: Axis.horizontal,
+                                  // buildDefaultDragHandles: false,
+                                  // physics: const NeverScrollableScrollPhysics(),
+                                  // shrinkWrap: true,
+                                  // onReorderStart: (_) {
+                                  //   print('start');
+                                  //   setState(() => columnDragging = true);
+                                  // },
+                                  // onReorderEnd: (_) =>
+                                  //     setState(() => columnDragging = false),
+                                  // onReorder: (oldI, newI) {
+                                  //   if (widget.onColumnsReorder != null) {
+                                  //     widget.onColumnsReorder!(oldI, newI);
+                                  //   }
+                                  // },
+                                  children: widget.columns.map<Widget>((e) {
+                                    final i = widget.columns.indexOf(e);
+                                    return AutoScrollTag(
+                                      index: i,
+                                      controller: headerController,
+                                      key: ValueKey(i),
+                                      child: MouseRegion(
+                                        cursor: widget.onColumnsReorder != null
+                                            ? SystemMouseCursors.grab
+                                            : SystemMouseCursors.basic,
+                                        // key: ValueKey(e.columnName),
+                                        child: Builder(
+                                          builder: (ct) {
+                                            return !scrollableGrid &&
+                                                    widget.columns.last == e
+                                                ? SizedBox(
+                                                    height: widget.rowHeight,
+                                                    width:
+                                                        spaceForLastColumn - 30,
+                                                    child: _headerCell(e),
+                                                  )
+                                                : _headerCell(e);
+                                          },
+                                        ),
+                                      ),
+                                    );
+                                  }).toList()
+                                  // ..insert(
+                                  //     0,
+                                  //     _headerCell(MyGridColumn(
+                                  //         label: '', columnName: 'index', width: 30))),
+                                  ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                Widget grid(List<DataGridRow> rows,
+                        [AutoScrollController? controller,
+                        AutoScrollController? bindingController]) =>
+                    Column(
+                      children: [
+                        NotificationListener(
+                          onNotification: (ScrollNotification scrollInfo) {
+                            if ((bindingController ?? indexesController)
+                                    .hasClients &&
+                                (bindingController ?? indexesController)
+                                        .position
+                                        .pixels !=
+                                    scrollInfo.metrics.pixels) {
+                              (bindingController ?? indexesController)
+                                  .jumpTo(scrollInfo.metrics.pixels);
+                            }
+                            return true;
+                          },
+                          child: Expanded(
+                            child: SizedBox(
+                              width: scrollableGrid ? requiredWidth : null,
+                              child: ListView.builder(
+                                prototypeItem:
+                                    SizedBox(height: widget.rowHeight),
+                                // shrinkWrap: true,
+                                physics: const ClampingScrollPhysics(),
+                                controller: controller ?? verticalController,
+                                itemCount: rows.length,
+                                itemBuilder: (ctx, i) => AutoScrollTag(
+                                  controller: controller ?? verticalController,
+                                  key: ValueKey(i),
+                                  index: i,
+                                  child: SizedBox(
+                                    height: widget.rowHeight,
+                                    child: Row(
+                                      children: widget.columns.map((column) {
+                                        final cell = rows[i]
+                                            .getCells()
+                                            // [widget.columns.indexOf(column)];
+                                            .firstWhereOrNull((c) =>
+                                                c.columnName ==
+                                                column.columnName);
+                                        if (cell == null) {
+                                          print(column.columnName);
+                                        }
+                                        cell!;
+                                        final index = RowColumnIndex(
+                                            i, widget.columns.indexOf(column));
+                                        final k = GlobalKey();
+                                        cellsKeys[column.columnName]?.add(k);
+                                        return !scrollableGrid &&
+                                                widget.columns.last == column
+                                            ? Expanded(
+                                                child: _gridCell(index, rows[i],
+                                                    column, cell, k))
+                                            : _gridCell(index, rows[i], column,
+                                                cell, k);
+                                      }).toList(),
+                                    ),
                                   ),
                                 ),
-                              );
-                            }).toList()
-                            // ..insert(
-                            //     0,
-                            //     _headerCell(MyGridColumn(
-                            //         label: '', columnName: 'index', width: 30))),
-                            ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-          Widget grid(List<DataGridRow> rows,
-                  [AutoScrollController? controller,
-                  AutoScrollController? bindingController]) =>
-              Column(
-                children: [
-                  NotificationListener(
-                    onNotification: (ScrollNotification scrollInfo) {
-                      if ((bindingController ?? indexesController).hasClients &&
-                          (bindingController ?? indexesController)
-                                  .position
-                                  .pixels !=
-                              scrollInfo.metrics.pixels) {
-                        (bindingController ?? indexesController)
-                            .jumpTo(scrollInfo.metrics.pixels);
-                      }
-                      return true;
-                    },
-                    child: Expanded(
-                      child: SizedBox(
-                        width: scrollableGrid ? requiredWidth : null,
-                        child: ListView.builder(
-                          prototypeItem: SizedBox(height: widget.rowHeight),
-                          // shrinkWrap: true,
-                          physics: const ClampingScrollPhysics(),
-                          controller: controller ?? verticalController,
-                          itemCount: rows.length,
-                          itemBuilder: (ctx, i) => AutoScrollTag(
-                            controller: controller ?? verticalController,
-                            key: ValueKey(i),
-                            index: i,
-                            child: SizedBox(
-                              height: widget.rowHeight,
-                              child: Row(
-                                children: widget.columns.map((column) {
-                                  final cell = rows[i]
-                                      .getCells()
-                                      // [widget.columns.indexOf(column)];
-                                      .firstWhereOrNull((c) =>
-                                          c.columnName == column.columnName);
-                                  if (cell == null) {
-                                    print(column.columnName);
-                                  }
-                                  cell!;
-                                  final index = RowColumnIndex(
-                                      i, widget.columns.indexOf(column));
-                                  final k = GlobalKey();
-                                  cellsKeys[column.columnName]?.add(k);
-                                  return !scrollableGrid &&
-                                          widget.columns.last == column
-                                      ? Expanded(
-                                          child: _gridCell(
-                                              index, rows[i], column, cell, k))
-                                      : _gridCell(
-                                          index, rows[i], column, cell, k);
-                                }).toList(),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
+                      ],
+                    );
 
-          Widget indexes(List<DataGridRow> rows,
-                  [AutoScrollController? controller,
-                  AutoScrollController? bindingController]) =>
-              Column(
-                children: [
-                  NotificationListener(
-                    onNotification: (ScrollNotification scrollInfo) {
-                      if ((bindingController ?? verticalController)
-                              .position
-                              .pixels !=
-                          scrollInfo.metrics.pixels) {
-                        (bindingController ?? verticalController)
-                            .jumpTo(scrollInfo.metrics.pixels);
-                      }
-                      return true;
-                    },
-                    child: Expanded(
-                      child: SizedBox(
-                        width: 30,
-                        child: ListView.builder(
-                          physics: const ClampingScrollPhysics(),
-                          prototypeItem: SizedBox(height: widget.rowHeight),
-                          controller: controller ?? indexesController,
-                          itemCount: rows.length,
-                          itemBuilder: (ctx, i) => Container(
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 0.3, color: Colors.grey),
-                                color: Get.theme.colorScheme.tertiary),
-                            height: widget.rowHeight,
-                            width: 30,
-                            child: Center(
-                              child: FittedBox(
-                                child: Text(
-                                  (i + 1).toString(),
-                                  style: widget.headerStyle,
+                Widget indexes(List<DataGridRow> rows,
+                        [AutoScrollController? controller,
+                        AutoScrollController? bindingController]) =>
+                    Column(
+                      children: [
+                        NotificationListener(
+                          onNotification: (ScrollNotification scrollInfo) {
+                            if ((bindingController ?? verticalController)
+                                    .position
+                                    .pixels !=
+                                scrollInfo.metrics.pixels) {
+                              (bindingController ?? verticalController)
+                                  .jumpTo(scrollInfo.metrics.pixels);
+                            }
+                            return true;
+                          },
+                          child: Expanded(
+                            child: SizedBox(
+                              width: 30,
+                              child: ListView.builder(
+                                physics: const ClampingScrollPhysics(),
+                                prototypeItem:
+                                    SizedBox(height: widget.rowHeight),
+                                controller: controller ?? indexesController,
+                                itemCount: rows.length,
+                                itemBuilder: (ctx, i) => Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          width: 0.3, color: Colors.grey),
+                                      color: Get.theme.colorScheme.tertiary),
+                                  height: widget.rowHeight,
+                                  width: 30,
+                                  child: Center(
+                                    child: FittedBox(
+                                      child: Text(
+                                        (i + 1).toString(),
+                                        style: widget.headerStyle,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              );
+                        )
+                      ],
+                    );
 
-          Widget stackedGrid() {
-            final groups = getGroups();
+                Widget stackedGrid() {
+                  final groups = getGroups();
 
-            return SizedBox(
-              width: scrollableGrid ? requiredWidth + 30 : null,
-              child:
-                  //  CustomScrollView(
-                  //   controller: verticalController,
-                  //   slivers: groups.map((e) {
-                  //     final group = e;
-                  //     final items = getGroupsItems(group);
-                  //     final gController = ScrollController();
-                  //     final iController = ScrollController();
-                  //     return SliverList(
-                  //         delegate: SliverChildListDelegate([
-                  //       MyExpansionTile(
-                  //         tileHeight: widget.rowHeight,
-                  //         initialExpanded: false,
-                  //         title: Text(group is ConstantsCard
-                  //             ? group.nameForLocale
-                  //             : group.toString()),
-                  //         children: [
-                  //           SizedBox(
-                  //             height: items.length * widget.rowHeight <= 200
-                  //                 ? items.length * widget.rowHeight
-                  //                 : 200,
-                  //             child: Row(
-                  //               children: [
-                  //                 indexes(items, iController, gController),
-                  //                 Expanded(
-                  //                     child:
-                  //                         grid(items, gController, iController)),
-                  //               ],
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       )
-                  //     ]));
-                  //   }).toList(),
-                  // )
-                  ListView.builder(
-                physics: const ClampingScrollPhysics(),
-                controller: verticalController,
-                // itemExtent: widget.rowHeight,
-                // prototypeItem: SizedBox(height: widget.rowHeight),
-                itemBuilder: (ctx, i) {
-                  final group = groups[i];
-                  final items = getGroupsItems(group);
-                  final gController = AutoScrollController();
-                  final iController = AutoScrollController();
-                  return MyExpansionTile(
-                    tileHeight: widget.rowHeight,
-                    initialExpanded: i == 0,
-                    title: Text(
-                        widget.groupNameBuilder?.call(group) ?? group.toString()
-                        // group is ConstantsCard
-                        //   ? group.nameForLocale
-                        //   : group is DateTime
-                        //       ? DateFormat('yyy-MM-dd').format(group)
-                        //       : group.toString()
-                        ),
-                    children: [
-                      SizedBox(
-                        height: items.length * widget.rowHeight <= 200
-                            ? items.length * widget.rowHeight
-                            : 200,
-                        child: Row(
-                          children: [
-                            indexes(items, iController, gController),
-                            Expanded(
-                                child: grid(items, gController, iController)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                },
-                itemCount: groups.length,
-              ),
-            );
-          }
-
-          return KeyboardListener(
-            onKeyEvent: groupByColumn == null ? onKey : (_) {},
-            // autofocus: true,
-            focusNode: focusNode,
-            child: scrollableGrid
-                ? Scrollbar(
-                    // trackVisibility: true,
-                    interactive: true,
-                    controller: scrollController,
-                    thumbVisibility: true,
-                    scrollbarOrientation: ScrollbarOrientation.bottom,
-                    child: Scrollbar(
-                      // trackVisibility: true,
+                  return SizedBox(
+                    width: scrollableGrid ? requiredWidth + 30 : null,
+                    child:
+                        //  CustomScrollView(
+                        //   controller: verticalController,
+                        //   slivers: groups.map((e) {
+                        //     final group = e;
+                        //     final items = getGroupsItems(group);
+                        //     final gController = ScrollController();
+                        //     final iController = ScrollController();
+                        //     return SliverList(
+                        //         delegate: SliverChildListDelegate([
+                        //       MyExpansionTile(
+                        //         tileHeight: widget.rowHeight,
+                        //         initialExpanded: false,
+                        //         title: Text(group is ConstantsCard
+                        //             ? group.nameForLocale
+                        //             : group.toString()),
+                        //         children: [
+                        //           SizedBox(
+                        //             height: items.length * widget.rowHeight <= 200
+                        //                 ? items.length * widget.rowHeight
+                        //                 : 200,
+                        //             child: Row(
+                        //               children: [
+                        //                 indexes(items, iController, gController),
+                        //                 Expanded(
+                        //                     child:
+                        //                         grid(items, gController, iController)),
+                        //               ],
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       )
+                        //     ]));
+                        //   }).toList(),
+                        // )
+                        ListView.builder(
+                      physics: const ClampingScrollPhysics(),
                       controller: verticalController,
-                      thumbVisibility: verticalController.hasClients &&
-                          groupByColumn == null,
-                      interactive: true,
-                      scrollbarOrientation: arabicLocale
-                          ? ScrollbarOrientation.left
-                          : ScrollbarOrientation.right,
-                      child: Column(
-                        children: [
-                          headers(),
-                          Expanded(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
+                      // itemExtent: widget.rowHeight,
+                      // prototypeItem: SizedBox(height: widget.rowHeight),
+                      itemBuilder: (ctx, i) {
+                        final group = groups[i];
+                        final items = getGroupsItems(group);
+                        final gController = AutoScrollController();
+                        final iController = AutoScrollController();
+                        return MyExpansionTile(
+                          tileHeight: widget.rowHeight,
+                          initialExpanded: i == 0,
+                          title: Text(widget.groupNameBuilder?.call(group) ??
+                                  group.toString()
+                              // group is ConstantsCard
+                              //   ? group.nameForLocale
+                              //   : group is DateTime
+                              //       ? DateFormat('yyy-MM-dd').format(group)
+                              //       : group.toString()
+                              ),
+                          children: [
+                            SizedBox(
+                              height: items.length * widget.rowHeight <= 200
+                                  ? items.length * widget.rowHeight
+                                  : 200,
+                              child: Row(
+                                children: [
+                                  indexes(items, iController, gController),
+                                  Expanded(
+                                      child: grid(
+                                          items, gController, iController)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                      itemCount: groups.length,
+                    ),
+                  );
+                }
+
+                return KeyboardListener(
+                  onKeyEvent: groupByColumn == null ? onKey : (_) {},
+                  // autofocus: true,
+                  focusNode: focusNode,
+                  child: scrollableGrid
+                      ? Scrollbar(
+                          // trackVisibility: true,
+                          interactive: true,
+                          controller: scrollController,
+                          thumbVisibility: true,
+                          scrollbarOrientation: ScrollbarOrientation.bottom,
+                          child: Scrollbar(
+                            // trackVisibility: true,
+                            controller: verticalController,
+                            thumbVisibility: verticalController.hasClients &&
+                                groupByColumn == null,
+                            interactive: true,
+                            scrollbarOrientation: arabicLocale
+                                ? ScrollbarOrientation.left
+                                : ScrollbarOrientation.right,
+                            child: Column(
                               children: [
-                                if (groupByColumn == null)
-                                  indexes(widget.source.rows),
+                                headers(),
                                 Expanded(
-                                  child: NotificationListener(
-                                    onNotification:
-                                        (ScrollNotification scrollInfo) {
-                                      if (headerController.hasClients &&
-                                          headerController.position.pixels !=
-                                              scrollInfo.metrics.pixels) {
-                                        headerController
-                                            .jumpTo(scrollInfo.metrics.pixels);
-                                      }
-                                      return true;
-                                    },
-                                    child: SingleChildScrollView(
-                                      physics: const ClampingScrollPhysics(),
-                                      controller: scrollController,
-                                      scrollDirection: Axis.horizontal,
-                                      child: groupByColumn == null
-                                          ? grid(widget.source.rows)
-                                          : stackedGrid(),
-                                    ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (groupByColumn == null)
+                                        indexes(widget.source.rows),
+                                      Expanded(
+                                        child: NotificationListener(
+                                          onNotification:
+                                              (ScrollNotification scrollInfo) {
+                                            if (headerController.hasClients &&
+                                                headerController
+                                                        .position.pixels !=
+                                                    scrollInfo.metrics.pixels) {
+                                              headerController.jumpTo(
+                                                  scrollInfo.metrics.pixels);
+                                            }
+                                            return true;
+                                          },
+                                          child: SingleChildScrollView(
+                                            physics:
+                                                const ClampingScrollPhysics(),
+                                            controller: scrollController,
+                                            scrollDirection: Axis.horizontal,
+                                            child: groupByColumn == null
+                                                ? grid(widget.source.rows)
+                                                : stackedGrid(),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  )
-                : Scrollbar(
-                    controller: verticalController,
-                    thumbVisibility: true,
-                    scrollbarOrientation: arabicLocale
-                        ? ScrollbarOrientation.left
-                        : ScrollbarOrientation.right,
-                    child: Column(
-                      children: [
-                        headers(),
-                        Expanded(
-                          child: Row(
+                        )
+                      : Scrollbar(
+                          controller: verticalController,
+                          thumbVisibility: true,
+                          scrollbarOrientation: arabicLocale
+                              ? ScrollbarOrientation.left
+                              : ScrollbarOrientation.right,
+                          child: Column(
                             children: [
-                              if (groupByColumn == null)
-                                indexes(widget.source.rows),
+                              headers(),
                               Expanded(
-                                  child: groupByColumn == null
-                                      ? grid(widget.source.rows)
-                                      : stackedGrid()),
+                                child: Row(
+                                  children: [
+                                    if (groupByColumn == null)
+                                      indexes(widget.source.rows),
+                                    Expanded(
+                                        child: groupByColumn == null
+                                            ? grid(widget.source.rows)
+                                            : stackedGrid()),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-          );
-        },
-      ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -1369,7 +1424,8 @@ class MyGridColumn {
   final String Function(dynamic)? cellValueStringforInput;
   // final bool searchableColumn;
   final List<Widget> Function(BuildContext)? contextMenuItems;
-  int Function(dynamic a, dynamic b)? compareValuesForSort;
+  final int Function(dynamic a, dynamic b)? compareValuesForSort;
+  final bool canSearchInColumn;
 
   MyGridColumn({
     required this.label,
@@ -1380,6 +1436,7 @@ class MyGridColumn {
     this.cellValueStringforInput,
     this.allowEditing = true,
     this.allowCopyLastRow = false,
+    this.canSearchInColumn = false,
     // this.searchableColumn = true,
   });
 }
