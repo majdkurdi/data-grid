@@ -584,6 +584,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
         currentCell.columnIndex >= widget.columns.length) {
       // widget.source.onCellCancelEdit(currentCell);
       editMode = false;
+      searchColumn = null;
       currentCell = RowColumnIndex(0, 0);
       Future.delayed(const Duration(milliseconds: 500), () {
         if (scrollController.hasClients) scrollController.jumpTo(0);
@@ -637,15 +638,15 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               adjustAllColumns();
             },
             title: 'autoFitAllFields'.tr),
-            if(e.canSearchInColumn)
-        ContextMenuTile(
-            onTap: () {
-              Navigator.of(c).pop();
-              searchController.text = '';
-              setState(() => searchColumn = e);
-              searchFieldFocus.requestFocus();
-            },
-            title: 'searchInColumn'.tr),
+        if (e.canSearchInColumn)
+          ContextMenuTile(
+              onTap: () {
+                Navigator.of(c).pop();
+                searchController.text = '';
+                setState(() => searchColumn = e);
+                searchFieldFocus.requestFocus();
+              },
+              title: 'searchInColumn'.tr),
         ...e.contextMenuItems?.call(c) ?? [],
       ],
       child: Container(
@@ -875,8 +876,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                     ? Get.theme.colorScheme.primary.withOpacity(0.4)
                     : searchColumn?.columnName == column.columnName &&
                             searchController.text.isNotEmpty &&
-                            cell.value
-                                .toString()
+                            (cell.value?.toString() ?? '')
                                 .contains(searchController.text)
                         ? Colors.amber[400]
                         : index.rowIndex.isEven
@@ -965,7 +965,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                   focusNode: searchFieldFocus,
                   controller: searchController,
                   decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
                       hint: Text('${'searchIn'.tr} ${searchColumn!.label}')),
                   onSubmitted: (value) => setState(() {}),
                 ),
