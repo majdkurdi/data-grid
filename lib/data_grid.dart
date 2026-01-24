@@ -637,6 +637,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               adjustAllColumns();
             },
             title: 'autoFitAllFields'.tr),
+            if(e.canSearchInColumn)
         ContextMenuTile(
             onTap: () {
               Navigator.of(c).pop();
