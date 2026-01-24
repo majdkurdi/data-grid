@@ -876,7 +876,9 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                     ? Get.theme.colorScheme.primary.withOpacity(0.4)
                     : searchColumn?.columnName == column.columnName &&
                             searchController.text.isNotEmpty &&
-                            (column.valueToString?.call(cell.value) ?? cell.value?.toString() ?? '')
+                            (column.valueToString?.call(cell.value, row) ??
+                                    cell.value?.toString() ??
+                                    '')
                                 .contains(searchController.text)
                         ? Colors.amber[400]
                         : index.rowIndex.isEven
@@ -1429,8 +1431,7 @@ class MyGridColumn {
   final List<Widget> Function(BuildContext)? contextMenuItems;
   final int Function(dynamic a, dynamic b)? compareValuesForSort;
   final bool canSearchInColumn;
-final    String Function(dynamic)? valueToString;
-
+  final String Function(dynamic cellValue, DataGridRow row)? valueToString;
 
   MyGridColumn({
     required this.label,
