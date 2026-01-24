@@ -645,7 +645,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
               setState(() => searchColumn = e);
               searchFieldFocus.requestFocus();
             },
-            title: 'autoFitAllFields'.tr),
+            title: 'searchInColumn'.tr),
         ...e.contextMenuItems?.call(c) ?? [],
       ],
       child: Container(
