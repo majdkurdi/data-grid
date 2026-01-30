@@ -879,10 +879,11 @@ class _XtraDataGridState extends State<XtraDataGrid> {
                     ? Get.theme.colorScheme.primary.withOpacity(0.4)
                     : searchColumn?.columnName == column.columnName &&
                             searchController.text.isNotEmpty &&
-                            (column.valueToString?.call(cell.value, row) ??
-                                    cell.value?.toString() ??
-                                    '')
-                                .contains(searchController.text)
+                            _searchInText(searchController.text, [
+                              (column.valueToString?.call(cell.value, row) ??
+                                  cell.value?.toString() ??
+                                  '')
+                            ])
                         ? Colors.amber[400]
                         : index.rowIndex.isEven
                             ? Colors.white
@@ -1529,4 +1530,28 @@ class RowColumnIndex {
   String toString() {
     return 'RowColumnIndex($rowIndex, $columnIndex)';
   }
+}
+
+bool _searchInText(String searchText, List<String> textt) {
+  final sText = searchText
+      .toLowerCase()
+      .replaceArabicNumber()
+      .replaceHamzat()
+      .replaceAll('-', ' ')
+      .split(' ');
+  final text = [];
+  for (var t in textt) {
+    text.addAll(
+        t.toLowerCase().replaceArabicNumber().replaceHamzat().split(' '));
+  }
+  for (var i in sText) {
+    bool partExists = false;
+    for (var x in text) {
+      if (x.contains(i)) {
+        partExists = true;
+      }
+    }
+    if (!partExists) return false;
+  }
+  return true;
 }

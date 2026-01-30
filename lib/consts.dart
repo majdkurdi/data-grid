@@ -94,4 +94,14 @@ extension Numbers on String {
     }
     return res;
   }
+
+  String replaceHamzat() {
+    const hamzat = ['أ', 'إ', 'آ'];
+
+    String res = this;
+    for (int i = 0; i < hamzat.length; i++) {
+      res = res.replaceAll(hamzat[i], 'ا');
+    }
+    return res;
+  }
 }
