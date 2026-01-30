@@ -39,6 +39,7 @@ class XtraDataGrid extends StatefulWidget {
       this.alt2Shortcut,
       this.alt3Shortcut,
       this.altEqualShortcut,
+      this.textFieldBuilder,
       this.rowHeight = 22});
   final MyDataGridSource source;
   final Color? headerColor;
@@ -76,6 +77,8 @@ class XtraDataGrid extends StatefulWidget {
   final void Function(dynamic currenctCellValue, dynamic currentRowValue)?
       onRebuild;
   final String Function(dynamic)? groupNameBuilder;
+  final Widget Function(TextEditingController controller, FocusNode focusNode,
+      void Function(String) onSubmit)? textFieldBuilder;
 
   void reorderColumns(int lastI, int newI) {
     final c = columns.removeAt(lastI);
@@ -963,14 +966,17 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           Row(
             children: [
               Expanded(
-                child: TextField(
-                  focusNode: searchFieldFocus,
-                  controller: searchController,
-                  decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      hint: Text('${'searchIn'.tr} ${searchColumn!.label}')),
-                  onSubmitted: (value) => setState(() {}),
-                ),
+                child: widget.textFieldBuilder?.call(searchController,
+                        searchFieldFocus, (_) => setState(() {})) ??
+                    TextField(
+                      focusNode: searchFieldFocus,
+                      controller: searchController,
+                      decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          hint:
+                              Text('${'searchIn'.tr} ${searchColumn!.label}')),
+                      onSubmitted: (value) => setState(() {}),
+                    ),
               ),
               IconButton(
                 onPressed: () {
