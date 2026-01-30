@@ -78,7 +78,7 @@ class XtraDataGrid extends StatefulWidget {
       onRebuild;
   final String Function(dynamic)? groupNameBuilder;
   final Widget Function(TextEditingController controller, FocusNode focusNode,
-      void Function(String) onSubmit)? textFieldBuilder;
+      void Function(String) onSubmit, String hint)? textFieldBuilder;
 
   void reorderColumns(int lastI, int newI) {
     final c = columns.removeAt(lastI);
@@ -968,7 +968,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
             children: [
               Expanded(
                 child: widget.textFieldBuilder?.call(searchController,
-                        searchFieldFocus, (_) => setState(() {})) ??
+                        searchFieldFocus, (_) => setState(() {}), '${'searchIn'.tr} ${searchColumn!.label}') ??
                     TextField(
                       focusNode: searchFieldFocus,
                       controller: searchController,
