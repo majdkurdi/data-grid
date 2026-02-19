@@ -555,7 +555,9 @@ class _XtraDataGridState extends State<XtraDataGrid> {
       final listToAdd = clipboardContent.reversed
           .map((i) => widget.source.rowFromClipboard!(i))
           .toList();
+      print(listToAdd);
       for (var i in listToAdd) {
+        print(i);
         widget.source.insertRow(cellIndex.rowIndex, i);
       }
       widget.source.afterPasteFromClipboard?.call();
