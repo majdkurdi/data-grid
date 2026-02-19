@@ -558,7 +558,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
       for (var i in listToAdd) {
         widget.source.insertRow(cellIndex.rowIndex, i);
       }
-      widget.source.afterPasteFromClipboard?.call([...widget.source.rows]);
+      widget.source.afterPasteFromClipboard?.call(listToAdd);
       setState(() {});
     }
   }
