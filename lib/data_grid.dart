@@ -40,6 +40,7 @@ class XtraDataGrid extends StatefulWidget {
       this.alt3Shortcut,
       this.altEqualShortcut,
       this.textFieldBuilder,
+      this.afterPasteFromClipboard,
       this.rowHeight = 22});
   final MyDataGridSource source;
   final Color? headerColor;
@@ -54,6 +55,7 @@ class XtraDataGrid extends StatefulWidget {
   final void Function(DataGridRow)? onLongPress;
   final void Function(RowColumnIndex)? setSelectedCell;
   final void Function(DataGridRow)? onDoubleTap;
+  final void Function()? afterPasteFromClipboard;
   final bool autoFocus;
   final bool Function()? autoFocusGetter;
   final bool? manualFocus;
@@ -558,6 +560,7 @@ class _XtraDataGridState extends State<XtraDataGrid> {
       for (var i in listToAdd) {
         widget.source.insertRow(cellIndex.rowIndex, i);
       }
+      widget.afterPasteFromClipboard?.call();
       setState(() {});
     }
   }
