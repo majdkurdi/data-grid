@@ -555,11 +555,10 @@ class _XtraDataGridState extends State<XtraDataGrid> {
       final listToAdd = clipboardContent.reversed
           .map((i) => widget.source.rowFromClipboard!(i))
           .toList();
-          print(listToAdd.map((e) => e.cells.map((v) => v.value.toString()).join(',')).toList());
       for (var i in listToAdd) {
         widget.source.insertRow(cellIndex.rowIndex, i);
       }
-      widget.source.afterPasteFromClipboard?.call();
+      widget.source.afterPasteFromClipboard?.call(widget.source.rows);
       setState(() {});
     }
   }
@@ -1483,7 +1482,7 @@ class MyDataGridSource extends Equatable {
       DataGridRow row, RowColumnIndex currentCell, GlobalKey key) {
     return Container();
   }
-  void Function()? afterPasteFromClipboard;
+  void Function(List<DataGridRow> newRows)? afterPasteFromClipboard;
 
   List<Widget> buildContextMenu(BuildContext menuCtx, DataGridCell cell,
       MyGridColumn column, RowColumnIndex cellIndex, DataGridRow row) {
