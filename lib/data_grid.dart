@@ -541,20 +541,21 @@ class _XtraDataGridState extends State<XtraDataGrid> {
           widget.columns[cellIndex.columnIndex]);
     } else if (clipboardContent is List<List<String>> &&
         widget.source.rowFromClipboard != null) {
+          final listToAdd = clipboardContent.reversed
+          .map((i) => widget.source.rowFromClipboard!(i)).where((e) => e != null)
+          .toList().cast<DataGridRow>();
       final rowsToDelete = widget.source.rows
           .getRange(
               cellIndex.rowIndex,
-              widget.source.rows.length <= clipboardContent.length
+              widget.source.rows.length <= listToAdd.length
                   ? widget.source.rows.length
-                  : cellIndex.rowIndex + clipboardContent.length)
+                  : cellIndex.rowIndex + listToAdd.length)
           .toList();
 
       for (var i in rowsToDelete) {
         widget.source.deleteRow(i);
       }
-      final listToAdd = clipboardContent.reversed
-          .map((i) => widget.source.rowFromClipboard!(i))
-          .toList();
+      
       for (var i in listToAdd) {
         widget.source.insertRow(cellIndex.rowIndex, i);
       }
@@ -1473,7 +1474,7 @@ class MyDataGridSource extends Equatable {
   bool? allowInsertingRow(int rowIndex) => null;
   void insertRow(int index, DataGridRow row) {}
 
-  DataGridRow Function(List<String>)? rowFromClipboard;
+  DataGridRow? Function(List<String>)? rowFromClipboard;
   String firstChar = '';
   final focus = FocusNode();
   final editingController = TextEditingController();
